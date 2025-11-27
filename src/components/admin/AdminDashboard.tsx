@@ -7,11 +7,17 @@ import { Button } from "../ui/button";
 import { ExternalLink } from "lucide-react";
 import { MenuManager } from "./MenuManager";
 import { PageEditor } from "./PageEditor";
+import { DiagnosticPanel } from "./DiagnosticPanel"; // ✅ 추가
 
 export function AdminDashboard() {
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
 
   console.log('[AdminDashboard] Rendering...', { editingPageId });
+  
+  // ✅ 외부 매뉴얼 링크 (환경변수 또는 현재 origin 사용)
+  const manualUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : 'https://dms-guide.figma.site/';
 
   // 페이지 편집 모드
   if (editingPageId) {
@@ -30,7 +36,7 @@ export function AdminDashboard() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  window.open('https://dms-guide.figma.site/', '_blank');
+                  window.open(manualUrl, '_blank');
                 }}
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
@@ -59,7 +65,7 @@ export function AdminDashboard() {
             <Button
               variant="outline"
               onClick={() => {
-                window.open('https://dms-guide.figma.site/', '_blank');
+                window.open(manualUrl, '_blank');
               }}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
@@ -70,6 +76,9 @@ export function AdminDashboard() {
       </header>
 
       <main className="container mx-auto px-6 py-8">
+        {/* ✅ 진단 패널 */}
+        <DiagnosticPanel />
+        
         <MenuManager onEditPage={setEditingPageId} />
       </main>
     </div>

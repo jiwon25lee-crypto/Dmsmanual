@@ -206,7 +206,6 @@ export function PageManager() {
                     <SelectItem value="StartFeaturesPage">
                       StartFeaturesPage
                     </SelectItem>
-                    <SelectItem value="TabPage">TabPage</SelectItem>
                     <SelectItem value="NoticeListPage">
                       NoticeListPage
                     </SelectItem>

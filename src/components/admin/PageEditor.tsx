@@ -13,7 +13,6 @@ import { Save, Image as ImageIcon, Plus, Trash2 } from "lucide-react";
 import { useLanguage } from "../LanguageContext";
 import { ImageUploader } from "./ImageUploader";
 import { FeatureCardsEditor, type FeatureCardData } from "./FeatureCardsEditor";
-import { TabContentEditor, type TabContentData } from "./TabContentEditor";
 import { AccordionEditor, type NoticeItemData } from "./AccordionEditor";
 
 interface PageEditorProps {
@@ -57,10 +56,49 @@ export function PageEditor({ pageId }: PageEditorProps) {
         ko: (getTranslation(`${pageId}.header-image`, 'ko') || "") as string,
         en: (getTranslation(`${pageId}.header-image`, 'en') || "") as string,
       },
-      headerImageEnabled: !!(getTranslation(`${pageId}.header-image`, 'ko') as string), // 🆕 헤더 이미지 사용 여부
-      headerImageInputMethod: "upload" as "upload" | "url", // 🆕 헤더 이미지 입력 방식
+      headerImageEnabled: 
+        t(`${pageId}.header-image-enabled`) === true || 
+        !!(getTranslation(`${pageId}.header-image`, 'ko') as string) || 
+        !!(getTranslation(`${pageId}.header-image`, 'en') as string), // ✅ 이미지 URL이 있으면 자동으로 활성화
+      headerImageInputMethod: (getTranslation(`${pageId}.header-image-input-method`, 'ko') || "upload") as "upload" | "url", // ✅ translations에서 로드
+      tipTitle: {
+        ko: (getTranslation(`${pageId}.tip-title`, 'ko') || "") as string,
+        en: (getTranslation(`${pageId}.tip-title`, 'en') || "") as string,
+      },
+      tipDesc: {
+        ko: (getTranslation(`${pageId}.tip-desc`, 'ko') || "") as string,
+        en: (getTranslation(`${pageId}.tip-desc`, 'en') || "") as string,
+      },
+      tipVisible: (() => {
+        const value = t(`${pageId}.tip-visible`);
+        // 명시적으로 false가 아니면 기본값 처리
+        // boolean true, 문자열 "true", 숫자 1 등을 모두 true로 처리
+        if (value === false || value === "false" || value === 0) {
+          return false;
+        }
+        // 값이 없거나 undefined이면 false (기본값)
+        if (value === undefined || value === null || value === "") {
+          return false;
+        }
+        // 그 외의 경우 true로 간주
+        return Boolean(value);
+      })(),
       steps: [] as StepData[],
     };
+    
+    // 🆕 디버깅: 로드된 헤더 이미지 데이터 확인
+    console.log('[PageEditor] Loaded header image data:', {
+      headerImageEnabled: data.headerImageEnabled,
+      headerImageInputMethod: data.headerImageInputMethod,
+      headerImageKo: data.headerImage.ko,
+      headerImageEn: data.headerImage.en,
+    });
+
+    // 🆕 디버깅: Tip 데이터 로드 확인
+    const tipVisibleRaw = t(`${pageId}.tip-visible`);
+    console.log('[PageEditor] ✅ Tip visible RAW value:', tipVisibleRaw, 'Type:', typeof tipVisibleRaw);
+    console.log('[PageEditor] ✅ Tip visible FINAL:', data.tipVisible);
+    console.log('[PageEditor] ✅ Tip title (ko):', data.tipTitle.ko);
 
     // Step 1~10 로드 (실제 존재하는 것만)
     for (let i = 1; i <= 10; i++) {
@@ -143,6 +181,7 @@ export function PageEditor({ pageId }: PageEditorProps) {
           number: i,
           visible: t(`${pageId}.feature${i}.visible`) !== false, // 기본값 true
           icon: (getTranslation(`${pageId}.feature${i}.icon`, 'ko') || "📄") as string,
+          link: (getTranslation(`${pageId}.feature${i}.link`, 'ko') || undefined) as string | undefined, // ✅ link 추가
           title: {
             ko: titleKo,
             en: (getTranslation(titleKey, 'en') || "") as string,
@@ -169,8 +208,6 @@ export function PageEditor({ pageId }: PageEditorProps) {
         return 'basic'; // default는 기본 정보부터 시작
       case 'features':
         return 'basic'; // features도 기본 정보부터 시작
-      case 'tabs':
-        return 'basic'; // tabs도 기본 정보부터 시작
       case 'accordion':
         return 'basic'; // accordion도 기본 정보부터 시작
       default:
@@ -187,9 +224,6 @@ export function PageEditor({ pageId }: PageEditorProps) {
     }
     return [];
   });
-  
-  // 🆕 TabContent 데이터 (tabs 레이아웃용)
-  const [tabContent, setTabContent] = useState<TabContentData | null>(null);
 
   // 🆕 공지사항 데이터 (accordion 레이아웃용) - 초기 로드
   const [notices, setNotices] = useState<NoticeItemData[]>(() => {
@@ -247,15 +281,19 @@ export function PageEditor({ pageId }: PageEditorProps) {
         console.log('[PageEditor] Adding feature cards:', featureCards);
       }
       
-      if (pageLayout === 'tabs' && tabContent) {
-        dataToSave.tabContent = tabContent;
-        console.log('[PageEditor] Adding tab content:', tabContent);
-      }
-      
       if (pageLayout === 'accordion' && notices.length > 0) {
         dataToSave.notices = notices;
-        console.log('[PageEditor] Adding notices:', notices);
+        console.log('[PageEditor] ✅ Adding notices to save:', notices);
+        console.log('[PageEditor] ✅ Notice 1 isImportant:', notices[0]?.isImportant);
+        console.log('[PageEditor] ✅ Notice 1 isNew:', notices[0]?.isNew);
       }
+      
+      // ✅ Tip 데이터 로그 (디버깅용)
+      console.log('[PageEditor] ✅ Tip data to save:', {
+        tipTitle: dataToSave.tipTitle,
+        tipDesc: dataToSave.tipDesc,
+        tipVisible: dataToSave.tipVisible,
+      });
       
       // ✅ LanguageContext 실시간 업데이트
       updatePageData(pageId, dataToSave);
@@ -309,10 +347,6 @@ export function PageEditor({ pageId }: PageEditorProps) {
           
           {pageLayout === 'features' && (
             <TabsTrigger value="features">🎯 Feature 카드 관리</TabsTrigger>
-          )}
-          
-          {pageLayout === 'tabs' && (
-            <TabsTrigger value="tab-content">📑 탭 컨텐츠 관리</TabsTrigger>
           )}
           
           {pageLayout === 'accordion' && (
@@ -502,6 +536,7 @@ export function PageEditor({ pageId }: PageEditorProps) {
                           onUploadSuccess={(url) => {
                             setPageData({
                               ...pageData,
+                              headerImageEnabled: true, // ✅ 이미지 업로드 시 자동으로 활성화
                               headerImage: {
                                 ...pageData.headerImage,
                                 ko: url,
@@ -549,6 +584,7 @@ export function PageEditor({ pageId }: PageEditorProps) {
                           onUploadSuccess={(url) => {
                             setPageData({
                               ...pageData,
+                              headerImageEnabled: true, // ✅ 이미지 업로드 시 자동으로 활성화
                               headerImage: {
                                 ...pageData.headerImage,
                                 en: url,
@@ -590,6 +626,102 @@ export function PageEditor({ pageId }: PageEditorProps) {
                   </p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* ✅ Tip 영역 편집 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>💡 Tip 영역 (하단 안내 박스)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Tip 표시/숨김 */}
+              <div className="flex gap-6 mb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={pageData.tipVisible}
+                    onChange={(e) => {
+                      setPageData({
+                        ...pageData,
+                        tipVisible: e.target.checked,
+                      });
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <span className="font-medium">Tip 영역 표시</span>
+                </label>
+              </div>
+
+              {/* Tip 제목 */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="tip-title-ko">제목 (한국어)</Label>
+                  <Input
+                    id="tip-title-ko"
+                    value={pageData.tipTitle.ko}
+                    onChange={(e) =>
+                      setPageData({
+                        ...pageData,
+                        tipTitle: { ...pageData.tipTitle, ko: e.target.value },
+                      })
+                    }
+                    placeholder="도움말"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="tip-title-en">Title (English)</Label>
+                  <Input
+                    id="tip-title-en"
+                    value={pageData.tipTitle.en}
+                    onChange={(e) =>
+                      setPageData({
+                        ...pageData,
+                        tipTitle: { ...pageData.tipTitle, en: e.target.value },
+                      })
+                    }
+                    placeholder="Tip"
+                  />
+                </div>
+              </div>
+
+              {/* Tip 설명 */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="tip-desc-ko">설명 (한국어)</Label>
+                  <Textarea
+                    id="tip-desc-ko"
+                    value={pageData.tipDesc.ko}
+                    onChange={(e) =>
+                      setPageData({
+                        ...pageData,
+                        tipDesc: { ...pageData.tipDesc, ko: e.target.value },
+                      })
+                    }
+                    placeholder="추가 정보나 유의사항을 입력하세요."
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="tip-desc-en">Description (English)</Label>
+                  <Textarea
+                    id="tip-desc-en"
+                    value={pageData.tipDesc.en}
+                    onChange={(e) =>
+                      setPageData({
+                        ...pageData,
+                        tipDesc: { ...pageData.tipDesc, en: e.target.value },
+                      })
+                    }
+                    placeholder="Enter additional information or notes."
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                💡 Tip 영역은 페이지 하단에 파란색 배경의 안내 박스로 표시됩니다.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -883,18 +1015,6 @@ export function PageEditor({ pageId }: PageEditorProps) {
               pageId={pageId}
               onFeatureCardsChange={(cards) => {
                 setFeatureCards(cards);
-              }}
-            />
-          </TabsContent>
-        )}
-
-        {/* 탭 컨텐츠 관리 탭 - tabs 레이아웃 전용 */}
-        {pageLayout === 'tabs' && (
-          <TabsContent value="tab-content" className="space-y-4">
-            <TabContentEditor
-              pageId={pageId}
-              onTabContentChange={(content) => {
-                setTabContent(content);
               }}
             />
           </TabsContent>

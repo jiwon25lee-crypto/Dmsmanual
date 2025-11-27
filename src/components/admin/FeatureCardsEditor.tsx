@@ -27,7 +27,7 @@ interface FeatureCardsEditorProps {
 }
 
 export function FeatureCardsEditor({ pageId, onFeatureCardsChange }: FeatureCardsEditorProps) {
-  const { t, getAllPages } = useLanguage();
+  const { t, getAllPages, getTranslation } = useLanguage(); // ✅ getTranslation 추가
   
   // 🆕 모든 페이지 목록 가져오기
   const allPages = getAllPages();
@@ -37,28 +37,30 @@ export function FeatureCardsEditor({ pageId, onFeatureCardsChange }: FeatureCard
     const features: FeatureCardData[] = [];
     for (let i = 1; i <= 20; i++) { // 🔧 10 → 20으로 증가
       const titleKey = `${pageId}.feature${i}.title`;
-      const title = t(titleKey) as string;
+      const titleKo = getTranslation(titleKey, 'ko') as string; // ✅ 한국어 따로
+      const titleEn = getTranslation(titleKey, 'en') as string; // ✅ 영어 따로
       
-      if (title && title !== titleKey) {
+      if (titleKo && titleKo !== titleKey) {
         const visibleValue = t(`${pageId}.feature${i}.visible`);
         
         features.push({
           number: i,
           visible: visibleValue !== false, // 🔧 기본값 true (false가 아니면 true)
           title: {
-            ko: title,
-            en: title,
+            ko: titleKo, // ✅ 한국어
+            en: titleEn, // ✅ 영어
           },
           desc: {
-            ko: (t(`${pageId}.feature${i}.desc`) || "") as string,
-            en: (t(`${pageId}.feature${i}.desc`) || "") as string,
+            ko: (getTranslation(`${pageId}.feature${i}.desc`, 'ko') || "") as string, // ✅ 한국어
+            en: (getTranslation(`${pageId}.feature${i}.desc`, 'en') || "") as string, // ✅ 영어
           },
-          icon: (t(`${pageId}.feature${i}.icon`) || "🎯") as string,
-          link: (t(`${pageId}.feature${i}.link`) || undefined) as string, // 🆕 링크 추가
+          icon: (getTranslation(`${pageId}.feature${i}.icon`, 'ko') || "🎯") as string, // ✅ 언어 공통
+          link: (getTranslation(`${pageId}.feature${i}.link`, 'ko') || undefined) as string, // ✅ 언어 공통
         });
         
         console.log(`[FeatureCardsEditor] Loaded feature ${i}:`, {
-          title,
+          titleKo,
+          titleEn,
           visible: visibleValue !== false,
           visibleRaw: visibleValue,
         });

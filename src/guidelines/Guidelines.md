@@ -13,7 +13,6 @@
 │   ├── pages/                        # 페이지 컴포넌트
 │   │   ├── DefaultPage.tsx           # 기본 페이지 (넘버링 시스템)
 │   │   ├── StartFeaturesPage.tsx     # 컨텐츠 카드 UI
-│   │   ├── TabPage.tsx               # 탭 레이아웃
 │   │   └── NoticeListPage.tsx        # 공지사항 아코디언
 │   ├── LanguageContext.tsx           # 모든 번역 텍스트 중앙 관리 + visible 제어
 │   ├── ManualContent.tsx             # 페이지 라우터
@@ -497,12 +496,11 @@ const { t, language } = useLanguage();
 
 ## 현재 페이지 매핑
 
-| 페이지 ID          | 컴포넌트 파일           | 번역 네임스페이스    | 레이아웃 타입     |
-| ------------------ | ----------------------- | -------------------- | ----------------- |
-| `start-intro`      | `StartIntroPage.tsx`    | `start-intro.*`      | 카드 그리드       |
-| `start-features`   | `StartFeaturesPage.tsx` | `start-features.*`   | 카드 그리드 (3열) |
-| `member-dashboard` | `TabPage.tsx`           | `member-dashboard.*` | 탭 레이아웃       |
-| (기본값)           | `DefaultPage.tsx`       | `default.*`          | 기본 레이아웃     |
+| 페이지 ID        | 컴포넌트 파일           | 번역 네임스페이스  | 레이아웃 타입     |
+| ---------------- | ----------------------- | ------------------ | ----------------- |
+| `start-features` | `StartFeaturesPage.tsx` | `start-features.*` | 카드 그리드 (2열) |
+| `notice-list`    | `NoticeListPage.tsx`    | `notice-list.*`    | 아코디언          |
+| (기본값)         | `DefaultPage.tsx`       | `default.*`        | 기본 레이아웃     |
 
 ---
 
@@ -653,15 +651,7 @@ export function StartFeaturesPage({ onSectionChange }: Props) {
 - ✅ 아이콘 + 제목 + 설명 구조
 - ✅ 최상단 이미지 지원 (`header-image`)
 
-### 3. 탭 레이아웃 (TabPage)
-
-- 제목 + 소개
-- Tabs 컴포넌트
-  - Overview 탭: 이미지 + 설명
-  - Features 탭: 카드 그리드
-  - Guide 탭: Tooltip + Step + TipBox
-
-### 4. 아코디언 레이아웃 (NoticeListPage) 🆕
+### 3. 아코디언 레이아웃 (NoticeListPage) 🆕
 
 ```typescript
 export function NoticeListPage() {

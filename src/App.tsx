@@ -15,15 +15,28 @@ export default function App() {
   // 🚨 임시: 백오피스 강제 표시 (디버깅용)
   const FORCE_ADMIN = window.location.hash.includes('admin');
 
+  // ✅ URL 해시에서 섹션 ID 추출
+  const getSectionFromHash = (): string => {
+    const hash = window.location.hash;
+    if (!hash || hash === '#' || hash.includes('admin')) {
+      return 'start-features'; // 기본값
+    }
+    // #login-admin → login-admin
+    return hash.substring(1);
+  };
+
   // 해시 체크 함수
   const checkAdminRoute = () => {
     try {
       const hash = window.location.hash || '';
       const pathname = window.location.pathname || '';
       
+      // ✅ 개선: 정확한 경로 매칭으로 변경
       const isAdmin = 
-        hash.includes('admin') || 
-        pathname.includes('admin');
+        hash.includes('admin') ||           // 해시 기반: #admin
+        pathname === '/admin' ||            // 루트의 /admin
+        pathname.endsWith('/admin') ||      // 서브패스의 /admin
+        pathname.includes('/admin/');       // 서브디렉토리: /admin/*
       
       console.log('[Admin Route Check]');
       console.log('  - Current hash:', hash);
@@ -31,6 +44,14 @@ export default function App() {
       console.log('  - Is admin:', isAdmin);
       
       setIsAdminRoute(isAdmin);
+      
+      // ✅ Admin이 아니면 URL 해시에서 섹션 읽기
+      if (!isAdmin) {
+        const section = getSectionFromHash();
+        console.log('[Section from hash]:', section);
+        setActiveSection(section);
+      }
+      
       setIsReady(true);
     } catch (error) {
       console.error('[Admin Route Check Error]', error);
@@ -67,8 +88,12 @@ export default function App() {
   }, []);
 
   const handleSectionChange = (sectionId: string) => {
+    console.log('[Section Change]:', sectionId);
     setActiveSection(sectionId);
     setIsMobileSidebarOpen(false);
+    
+    // ✅ URL 해시 업데이트 (뒤로가기/앞으로가기 지원)
+    window.location.hash = sectionId;
   };
 
   // 로딩 중

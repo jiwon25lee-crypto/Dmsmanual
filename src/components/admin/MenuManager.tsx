@@ -233,7 +233,6 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
     const layoutNames: Record<string, string> = {
       default: "DefaultPage",
       features: "StartFeaturesPage",
-      tabs: "TabPage",
       accordion: "NoticeListPage",
     };
     return layoutNames[layout] || "DefaultPage";

@@ -3,6 +3,7 @@ import {
   ImageContainer,
   Tooltip,
   Step,
+  TipBox,
 } from "../common/PageComponents";
 import { getPageImage } from "../common/PageImages";
 
@@ -15,38 +16,33 @@ export function DefaultPage({
 }: DefaultPageProps) {
   const { t, language } = useLanguage();
 
-  // 🆕 이미지 URL 안전하게 가져오기 (키 값이 반환되는 경우 처리)
-  const getImageUrl = (key: string) => {
-    const value = t(key) as string;
-    // 값이 없거나 키 값과 동일하면(번역 없음) 빈 문자열 반환
-    if (!value || value === key) return "";
-    return value;
+  console.log(`[DefaultPage] 🔍 pageId:`, pageId);
+  console.log(`[DefaultPage] 🔍 tip-visible value:`, t(`${pageId}.tip-visible`));
+  console.log(`[DefaultPage] 🔍 tip-visible type:`, typeof t(`${pageId}.tip-visible`));
+  console.log(`[DefaultPage] 🔍 tip-title:`, t(`${pageId}.tip-title`));
+
+  // 🆕 Helper functions
+  const getImageUrl = (key: string): string => {
+    const url = t(key) as string;
+    return url && url !== key ? url : "";
   };
 
-  // 🆕 Step이 존재하는지 확인하는 함수
-  const hasStep = (stepNum: number) => {
-    const titleKey = `${pageId}.step${stepNum}.title`;
-    const title = t(titleKey) as string;
-    // 제목이 존재하고 키 값이 아닌 경우 = Step 존재
-    return title && title !== titleKey;
+  const isStepVisible = (stepNum: number): boolean => {
+    return t(`${pageId}.step${stepNum}.visible`) === true;
   };
 
-  // 🆕 Step이 visible인지 확인하는 함수
-  const isStepVisible = (stepNum: number) => {
-    // Step 데이터가 없으면 무조건 숨김
-    if (!hasStep(stepNum)) return false;
-    // Step 데이터가 있으면 visible 값 확인 (명시적으로 false가 아니면 표시)
-    const visibleValue = t(`${pageId}.step${stepNum}.visible`);
-    return visibleValue !== false;
+  const isStepImageVisible = (stepNum: number): boolean => {
+    const imageVisible = t(`${pageId}.step${stepNum}.image-visible`) === true;
+    const imageUrl = getImageUrl(`${pageId}.step${stepNum}.image`);
+    // ✅ 이미지 표시가 true이고 실제 URL이 있을 때만 true 반환
+    return imageVisible && !!imageUrl;
   };
 
-  // 🆕 Step 이미지가 visible인지 확인하는 함수
-  const isStepImageVisible = (stepNum: number) => {
-    // 이미지 URL이 없으면 숨김
-    if (!getImageUrl(`${pageId}.step${stepNum}.image`)) return false;
-    // 이미지가 있으면 image-visible 값 확인 (명시적으로 false가 아니면 표시)
-    const visibleValue = t(`${pageId}.step${stepNum}.image-visible`);
-    return visibleValue !== false;
+  const hasHeaderImage = (): boolean => {
+    const headerImageEnabled = t(`${pageId}.header-image-enabled`) === true;
+    const headerImageUrl = getImageUrl(`${pageId}.header-image`);
+    // ✅ 헤더 이미지 활성화되고 실제 URL이 있을 때만 true 반환
+    return headerImageEnabled && !!headerImageUrl;
   };
 
   return (
@@ -54,8 +50,8 @@ export function DefaultPage({
       {/* 제목 */}
       <h2 className="mb-6">{t(`${pageId}.title`)}</h2>
 
-      {/* 최상단 이미지 (옵션) */}
-      {getImageUrl(`${pageId}.header-image`) && (
+      {/* 최상단 이미지 (옵션) - 활성화되고 URL이 있을 때만 표시 */}
+      {hasHeaderImage() && (
         <ImageContainer
           src={getImageUrl(`${pageId}.header-image`)}
           alt={t(`${pageId}.title`) as string}
@@ -300,6 +296,14 @@ export function DefaultPage({
             {t(`${pageId}.step10.desc`)}
           </p>
         </div>
+      )}
+
+      {/* ✅ Tip 영역 (조건부 렌더링) */}
+      {t(`${pageId}.tip-visible`) === true && (
+        <TipBox
+          title={t(`${pageId}.tip-title`) as string}
+          description={t(`${pageId}.tip-desc`) as string}
+        />
       )}
     </>
   );

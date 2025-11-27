@@ -336,17 +336,6 @@ if (!file || !pageId || !fileName) {
 
 ---
 
-## 📝 **다음 단계 (Phase 2B)**
-
-현재 업로드는 작동하지만, "저장" 버튼은 아직 alert만 표시합니다.
-
-Phase 2B에서 구현할 것:
-- ✅ LanguageContext 실시간 업데이트
-- ✅ 페이지 새로고침 없이 반영
-- ✅ 매뉴얼 페이지 자동 업데이트
-
----
-
 ## 💡 **추가 개선 아이디어**
 
 ### **Future Enhancements:**

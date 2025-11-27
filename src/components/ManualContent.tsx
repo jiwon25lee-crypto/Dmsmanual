@@ -86,7 +86,7 @@ export function ManualContent({
     // 레이아웃에 따라 자동 라우팅 (refreshKey로 강제 리렌더링)
     switch (layout) {
       case "features":
-        return <StartFeaturesPage key={`features-${activeSection}-${refreshKey}`} onSectionChange={onSectionChange} />;
+        return <StartFeaturesPage key={`features-${activeSection}-${refreshKey}`} pageId={activeSection} onSectionChange={onSectionChange} />;
       case "accordion":
         return <NoticeListPage key={`notice-${activeSection}-${refreshKey}`} pageId={activeSection} />;
       case "default":

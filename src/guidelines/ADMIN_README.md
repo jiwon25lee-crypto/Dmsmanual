@@ -419,7 +419,7 @@ GET    /admin/stats                   - 대시보드 통계 조회
 - [Supabase 대시보드](https://supabase.com/dashboard)
 - [Supabase Storage 문서](https://supabase.com/docs/guides/storage)
 - [Supabase Auth 문서](https://supabase.com/docs/guides/auth)
-- 프로젝트 가이드라인: `/Guidelines.md`
+- 프로젝트 가이드라인: `/guidelines/Guidelines.md`
 
 ---
 

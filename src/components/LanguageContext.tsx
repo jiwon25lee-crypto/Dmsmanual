@@ -11,11 +11,12 @@ import { projectId, publicAnonKey } from '../utils/supabase/info';
 type Language = "ko" | "en";
 
 // 🆕 페이지 레이아웃 타입 정의
-export type PageLayout = "default" | "features" | "tabs" | "accordion";
+export type PageLayout = "default" | "features" | "accordion";
 
 // 🆕 페이지 메타데이터 인터페이스
 export interface PageMetadata {
   layout: PageLayout;
+  translationKey?: string; // 🆕 실제 번역에 사용되는 키 (pageId와 다를 수 있음)
   createdAt?: string;
   updatedAt?: string;
 }
@@ -28,6 +29,7 @@ interface LanguageContextType {
   updatePageData: (pageId: string, data: any) => void;
   getPageLayout: (pageId: string) => PageLayout; // 🆕 레이아웃 가져오기
   setPageLayout: (pageId: string, layout: PageLayout) => void; // 🆕 레이아웃 설정
+  getTranslationKey: (pageId: string) => string; // 🆕 번역 키 가져오기 (pageId와 다를 수 있음)
   addCategory: (id: string, nameKo: string, nameEn: string) => void; // 🆕 대메뉴 추가
   addPage: (pageId: string, nameKo: string, nameEn: string, layout: PageLayout) => void; // 🆕 소메뉴 추가
   deleteCategory: (categoryId: string) => void; // 🆕 대메뉴 삭제
@@ -57,9 +59,6 @@ const initialPageMetadata: Record<string, PageMetadata> = {
   "start-features": { layout: "features" },
   "start-intro": { layout: "features" },
   
-  // TabPage (탭 레이아웃)
-  "member-dashboard": { layout: "tabs" },
-  
   // DefaultPage (기본 레이아웃) - 대부분
   "start-login": { layout: "default" },
   "login-admin": { layout: "default" },
@@ -88,7 +87,7 @@ const initialPageMetadata: Record<string, PageMetadata> = {
   "library-folder": { layout: "default" },
   
   // NoticeListPage (아코디언 레이아웃)
-  "notice-list": { layout: "accordion" },
+  "notice-list": { layout: "accordion", translationKey: "notice-list" },
 };
 
 const pageMetadata: Record<string, PageMetadata> = { ...initialPageMetadata };
@@ -550,7 +549,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "section.start.features": "DMS 시작하기",
     
     // DMS 로그인/회원가입
-    "section.login.admin": "기관 대표 관리자 회원가입",
+    "section.login.admin": "기관 대표 ��리자 회원가입",
     "section.login.member": "구성원 초대 및 구성원 회원 가입",
 
     // DMS-상식플러스(App) 연동
@@ -855,7 +854,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "member-dashboard.guide-title": "대시보드 사용 가이드",
     "member-dashboard.step1.title": "대시보드 접속",
     "member-dashboard.step1.desc":
-      "좌측 메뉴에서 '회원 관리' > '대시보드'를 선택하여 메인 대시보드 화면으로 이동합니다.",
+      "좌측 메뉴에서 '회원 관리' > '대시보드'를 선택하여 메인 ���시보드 화면으로 이동합니다.",
     "member-dashboard.step1.image":
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
     "member-dashboard.step2.title": "주요 지표 확인",
@@ -1047,7 +1046,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
       "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=400&fit=crop",
     "member-consult.step3.title": "상담 히스토리 조회",
     "member-consult.step3.desc":
-      "회원별 과거 상담 내용을 시간순으로 조회하여 지속적인 관리를 제공합니다.",
+      "회원별 과거 상담 내용을 시간순으로 조회하여 지속적인 관리를 제공���니다.",
     "member-consult.step3.image":
       "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=400&fit=crop",
     "member-consult.step4.title": "상담 완료 처리",
@@ -1315,7 +1314,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "notice-list.intro":
       "DMS 서비스 업데이트, 이용약관 변경, 점검 안내 등 중요한 공지사항을 확인하세요.",
     "notice-list.badge.important": "중요",
-    "notice-list.badge.new": "신규",
+    "notice-list.badge.new": "최신",
     "notice-list.empty": "등록된 공지사항이 없습니다.",
     "notice-list.tip-title": "공지사항 알림 설정",
     "notice-list.tip-desc":
@@ -2243,7 +2242,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "notice-list.title": "Service Notices",
     "notice-list.intro":
       "Check important notices about DMS service updates, terms of service changes, maintenance schedules, and more.",
-    "notice-list.badge.important": "Important",
+    "notice-list.badge.important": "Noti",
     "notice-list.badge.new": "New",
     "notice-list.empty": "No notices available.",
     "notice-list.tip-title": "Notice Notification Settings",
@@ -2418,66 +2417,77 @@ export function LanguageProvider({
           }
         );
         
-        if (response.ok) {
-          const data = await response.json();
-          console.log('[LanguageContext] Data loaded from Supabase:', data);
-          
-          // ✅ 저장된 데이터가 있으면 완전히 교체 (하드코딩된 더미 데이터 제거)
-          if (data.translations) {
-            // ✅ 1. 기존 하드코딩된 데이터 전부 삭제
-            for (const key in translations.ko) {
-              delete translations.ko[key];
-            }
-            for (const key in translations.en) {
-              delete translations.en[key];
-            }
-            
-            // ✅ 2. Supabase 데이터만 넣기
-            if (data.translations.ko) {
-              Object.assign(translations.ko, data.translations.ko);
-            }
-            if (data.translations.en) {
-              Object.assign(translations.en, data.translations.en);
-            }
-            console.log('[LanguageContext] ✅ Translations replaced with Supabase data');
-            console.log('[LanguageContext] KO keys:', Object.keys(translations.ko).length);
-            console.log('[LanguageContext] EN keys:', Object.keys(translations.en).length);
-          }
-          
-          if (data.commonVisibility) {
-            // ✅ commonVisibility 완전 교체
-            for (const key in commonVisibility) {
-              delete commonVisibility[key];
-            }
-            Object.assign(commonVisibility, data.commonVisibility);
-            console.log('[LanguageContext] ✅ Visibility replaced with Supabase data');
-          }
-
-          if (data.pageMetadata) {
-            // ✅ pageMetadata 완전 교체
-            for (const key in pageMetadata) {
-              delete pageMetadata[key];
-            }
-            Object.assign(pageMetadata, data.pageMetadata);
-            console.log('[LanguageContext] ✅ PageMetadata replaced with Supabase data');
-          }
-          
-          // 리렌더링 트리거
-          setUpdateTrigger(prev => prev + 1);
-          
-          // ✅ 데이터 로드 완료 이벤트 발생
-          window.dispatchEvent(new CustomEvent('translations-updated', { 
-            detail: { 
-              source: 'load', 
-              timestamp: new Date().toISOString(),
-              keys: Object.keys(data.translations?.ko || {}).length
-            } 
-          }));
-        } else {
-          console.log('[LanguageContext] No saved data, using defaults');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        console.log('[LanguageContext] Data loaded from Supabase:', data);
+        
+        // ✅ 저장된 데이터가 있으면 완전히 교체 (하드코딩된 더미 데이터 제거)
+        if (data.translations) {
+          // ✅ 1. 기존 하드코딩된 데이터 전부 삭제
+          for (const key in translations.ko) {
+            delete translations.ko[key];
+          }
+          for (const key in translations.en) {
+            delete translations.en[key];
+          }
+          
+          // ✅ 2. Supabase 데이터만 넣기
+          if (data.translations.ko) {
+            Object.assign(translations.ko, data.translations.ko);
+          }
+          if (data.translations.en) {
+            Object.assign(translations.en, data.translations.en);
+          }
+          console.log('[LanguageContext] ✅ Translations replaced with Supabase data');
+          console.log('[LanguageContext] KO keys:', Object.keys(translations.ko).length);
+          console.log('[LanguageContext] EN keys:', Object.keys(translations.en).length);
+        }
+        
+        if (data.commonVisibility) {
+          // ✅ commonVisibility 완전 교체
+          for (const key in commonVisibility) {
+            delete commonVisibility[key];
+          }
+          Object.assign(commonVisibility, data.commonVisibility);
+          console.log('[LanguageContext] ✅ Visibility replaced with Supabase data');
+        }
+
+        if (data.pageMetadata) {
+          // ✅ pageMetadata 완전 교체
+          for (const key in pageMetadata) {
+            delete pageMetadata[key];
+          }
+          Object.assign(pageMetadata, data.pageMetadata);
+          console.log('[LanguageContext] ✅ PageMetadata replaced with Supabase data');
+        }
+        
+        // 리렌더링 트리거
+        setUpdateTrigger(prev => prev + 1);
+        
+        // ✅ 데이터 로드 완료 이벤트 발생
+        window.dispatchEvent(new CustomEvent('translations-updated', { 
+          detail: { 
+            source: 'load', 
+            timestamp: new Date().toISOString(),
+            keys: Object.keys(data.translations?.ko || {}).length
+          } 
+        }));
+        
+        // 🆕 배지 키 디버깅
+        console.log('[LanguageContext] 🔍 Badge translations check:');
+        console.log('  notice-list.badge.important (ko):', data.translations?.ko?.['notice-list.badge.important']);
+        console.log('  notice-list.badge.new (ko):', data.translations?.ko?.['notice-list.badge.new']);
+        console.log('  notice-list.badge.important (en):', data.translations?.en?.['notice-list.badge.important']);
+        console.log('  notice-list.badge.new (en):', data.translations?.en?.['notice-list.badge.new']);
       } catch (error) {
         console.error('[LanguageContext] Load error:', error);
+        console.log('[LanguageContext] Using default hardcoded data due to load error');
+        // ❌ Supabase 로드 실패 시 기본 하드코딩 데이터 사용
+        // 초기 데이터가 이미 translations, commonVisibility, pageMetadata에 있으므로
+        // 별도 처리 불필요 (fallback은 자동)
       } finally {
         console.log('[LanguageContext] Loading complete, setting isLoading to false');
         setIsLoading(false);
@@ -2490,13 +2500,32 @@ export function LanguageProvider({
   // ✅ useMemo로 감싸서 updateTrigger, language 변경 시 새로운 함수 생성
   const t = useMemo(() => {
     return (key: string): string | boolean => {
-      // ✅ visible 키는 commonVisibility에서 조회 (언어 무관)
-      if (key.endsWith(".visible") || key.endsWith(".image-visible")) {
+      // ✅ visible 키와 배지 키는 commonVisibility에서 조회 (언어 무관)
+      if (
+        key.endsWith(".visible") || 
+        key.endsWith(".image-visible") ||
+        key.endsWith(".tip-visible") || // 🆕 tip-visible 추가
+        key.endsWith(".header-image-enabled") || // 🆕 header-image-enabled 추가
+        key.endsWith(".isImportant") ||
+        key.endsWith(".isNew")
+      ) {
         return commonVisibility[key] ?? false; // 🔧 기본값 false로 변경
       }
 
       // ✅ 일반 번역 키는 현재 언어에서 조회
-      return translations[language][key] ?? key;
+      const result = translations[language][key] ?? key;
+      
+      // 🆕 배지 키 디버깅
+      if (key.includes('badge')) {
+        console.log(`[t] 🔍 Badge key: "${key}"`, {
+          language,
+          hasValue: !!translations[language][key],
+          result: result,
+          fullTranslations: Object.keys(translations[language]).filter(k => k.includes('badge'))
+        });
+      }
+      
+      return result;
     };
   }, [language, updateTrigger]);
 
@@ -2507,8 +2536,13 @@ export function LanguageProvider({
     
     console.log('[LanguageContext] Updating translation:', { key, value, targetLang });
     
-    // visible 키는 commonVisibility 업데이트
-    if (key.endsWith(".visible") || key.endsWith(".image-visible")) {
+    // visible 키와 배지 키는 commonVisibility 업데이트
+    if (
+      key.endsWith(".visible") || 
+      key.endsWith(".image-visible") ||
+      key.endsWith(".isImportant") ||
+      key.endsWith(".isNew")
+    ) {
       commonVisibility[key] = value;
     } else {
       // 일반 번역 키는 translations 업데이트
@@ -2525,8 +2559,19 @@ export function LanguageProvider({
   }, [language]);
 
   // 🆕 페이지 전체 데이터 업데이트
-  const updatePageData = (pageId: string, data: any) => {
-    console.log('[LanguageContext] Updating page data:', { pageId, data });
+  const updatePageData = (originalPageId: string, data: any) => {
+    console.log('[LanguageContext] Updating page data:', { originalPageId, data });
+    
+    // ✅ 실제 번역 키 가져오기 (pageId와 다를 수 있음)
+    const pageId = getTranslationKey(originalPageId);
+    console.log('[LanguageContext] Translation key:', pageId, '(original:', originalPageId, ')');
+    
+    // 🆕 디버깅: 헤더 이미지 관련 데이터 확인
+    console.log('[LanguageContext] Header image data:', {
+      headerImageEnabled: data.headerImageEnabled,
+      headerImageInputMethod: data.headerImageInputMethod,
+      headerImage: data.headerImage,
+    });
     
     // 한국어 업데이트
     if (data.title?.ko) {
@@ -2538,18 +2583,35 @@ export function LanguageProvider({
     if (data.guideTitle?.ko) {
       translations.ko[`${pageId}.guide-title`] = data.guideTitle.ko;
     }
+    
+    // 🆕 헤더 이미지 활성화 여부 저장 (commonVisibility)
+    if (data.headerImageEnabled !== undefined) {
+      commonVisibility[`${pageId}.header-image-enabled`] = data.headerImageEnabled;
+      console.log('[LanguageContext] ✅ Saved header-image-enabled:', data.headerImageEnabled);
+    }
+    
+    // 🆕 헤더 이미지 입력 방식 저장 (translations)
+    if (data.headerImageInputMethod !== undefined) {
+      translations.ko[`${pageId}.header-image-input-method`] = data.headerImageInputMethod;
+      translations.en[`${pageId}.header-image-input-method`] = data.headerImageInputMethod;
+      console.log('[LanguageContext] ✅ Saved header-image-input-method:', data.headerImageInputMethod);
+    }
+    
     if (data.headerImage !== undefined) {
       if (typeof data.headerImage === 'string') {
         // 🔄 Fallback: string 타입이면 양쪽 동일하게 저장
         translations.ko[`${pageId}.header-image`] = data.headerImage;
         translations.en[`${pageId}.header-image`] = data.headerImage;
+        console.log('[LanguageContext] ✅ Saved header-image (string):', data.headerImage);
       } else if (typeof data.headerImage === 'object') {
-        // ✅ 언어별 이미지 객체
+        // ✅ 언어별 이미지 객체 (빈 문자열도 저장)
         if (data.headerImage.ko !== undefined) {
           translations.ko[`${pageId}.header-image`] = data.headerImage.ko;
+          console.log('[LanguageContext] ✅ Saved header-image.ko:', data.headerImage.ko);
         }
         if (data.headerImage.en !== undefined) {
           translations.en[`${pageId}.header-image`] = data.headerImage.en;
+          console.log('[LanguageContext] ✅ Saved header-image.en:', data.headerImage.en);
         }
       }
     }
@@ -2697,6 +2759,30 @@ export function LanguageProvider({
       });
       
       console.log(`[LanguageContext] Updated ${data.notices.length} notices for ${pageId}`);
+    }
+    
+    // 🆕 Tip 영역 데이터 업데이트
+    if (data.tipTitle !== undefined) {
+      if (data.tipTitle.ko !== undefined) {
+        translations.ko[`${pageId}.tip-title`] = data.tipTitle.ko;
+      }
+      if (data.tipTitle.en !== undefined) {
+        translations.en[`${pageId}.tip-title`] = data.tipTitle.en;
+      }
+    }
+    
+    if (data.tipDesc !== undefined) {
+      if (data.tipDesc.ko !== undefined) {
+        translations.ko[`${pageId}.tip-desc`] = data.tipDesc.ko;
+      }
+      if (data.tipDesc.en !== undefined) {
+        translations.en[`${pageId}.tip-desc`] = data.tipDesc.en;
+      }
+    }
+    
+    if (data.tipVisible !== undefined) {
+      commonVisibility[`${pageId}.tip-visible`] = data.tipVisible;
+      console.log(`[LanguageContext] ✅ Updated tip-visible for ${pageId}:`, data.tipVisible);
     }
     
     // 🆕 TabContent 데이터 업데이트
@@ -2854,13 +2940,20 @@ export function LanguageProvider({
     return pageMetadata[pageId]?.layout || "default";
   };
 
+  // 🆕 번역 키 가져오기 (pageId와 다를 수 있음)
+  const getTranslationKey = (pageId: string): string => {
+    return pageMetadata[pageId]?.translationKey || pageId;
+  };
+
   // 🆕 페이지 레이아웃 설정 (신규 메뉴 생성 시만 사용)
   const setPageLayout = (pageId: string, layout: PageLayout) => {
     console.log('[LanguageContext] Setting page layout:', { pageId, layout });
     console.log('[LanguageContext] ⚠️ SETTING LAYOUT:', layout, 'for pageId:', pageId);
     
+    // ✅ translationKey는 pageId와 동일하게 설정 (별도 매핑 불필요)
     pageMetadata[pageId] = {
       layout,
+      translationKey: pageId, // ✅ pageId 그대로 사용
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -2924,6 +3017,13 @@ export function LanguageProvider({
       translations.en[`${pageId}.step1.image`] = "";
       commonVisibility[`${pageId}.step1.visible`] = true;
       commonVisibility[`${pageId}.step1.image-visible`] = false;
+      
+      // ✅ Tip 영역 기본값 추가 (default 레이아웃)
+      translations.ko[`${pageId}.tip-title`] = "도움말";
+      translations.ko[`${pageId}.tip-desc`] = "추가 정보나 유의사항을 입력하세요.";
+      translations.en[`${pageId}.tip-title`] = "Tip";
+      translations.en[`${pageId}.tip-desc`] = "Enter additional information or notes.";
+      commonVisibility[`${pageId}.tip-visible`] = false; // 기본값: 숨김
     } else if (layout === "features") {
       // Feature 카드 1개 추가
       translations.ko[`${pageId}.feature1.title`] = "기능 1";
@@ -2933,6 +3033,44 @@ export function LanguageProvider({
       translations.en[`${pageId}.feature1.desc`] = "Description for feature 1.";
       translations.en[`${pageId}.feature1.icon`] = "📌";
       commonVisibility[`${pageId}.feature1.visible`] = true;
+      
+      // ✅ Tip 영역 기본값 추가 (features 레이아웃)
+      translations.ko[`${pageId}.tip-title`] = "안내사항";
+      translations.ko[`${pageId}.tip-desc`] = "좌측 사이드바에서 원하는 메뉴를 선택하세요.";
+      translations.en[`${pageId}.tip-title`] = "Notice";
+      translations.en[`${pageId}.tip-desc`] = "Select the desired menu from the left sidebar.";
+      commonVisibility[`${pageId}.tip-visible`] = true; // 기본값: 표시
+    } else if (layout === "accordion") {
+      // ✅ Accordion 레이아웃 템플릿 추가
+      // 배지 번역
+      translations.ko[`${pageId}.badge.important`] = "중요";
+      translations.ko[`${pageId}.badge.new`] = "최신";
+      translations.en[`${pageId}.badge.important`] = "Noti";
+      translations.en[`${pageId}.badge.new`] = "New";
+      
+      // 빈 공지사항 메시지
+      translations.ko[`${pageId}.empty`] = "등록된 공지사항이 없습니다.";
+      translations.en[`${pageId}.empty`] = "No announcements available.";
+      
+      // 하단 팁 박스
+      translations.ko[`${pageId}.tip-title`] = "공지사항 안내";
+      translations.ko[`${pageId}.tip-desc`] = "중요한 서비스 공지와 업데이트 소식을 확인하세요.";
+      translations.en[`${pageId}.tip-title`] = "Notice Information";
+      translations.en[`${pageId}.tip-desc`] = "Check important service announcements and updates.";
+      commonVisibility[`${pageId}.tip-visible`] = true; // ✅ 기본값: 표시
+      
+      // 기본 공지사항 1개 추가 (샘플)
+      translations.ko[`${pageId}.notice1.title`] = "첫 번째 공지사항";
+      translations.ko[`${pageId}.notice1.date`] = new Date().toISOString().split('T')[0];
+      translations.ko[`${pageId}.notice1.content`] = "공지사항 내용을 입력하세요.";
+      translations.en[`${pageId}.notice1.title`] = "First Announcement";
+      translations.en[`${pageId}.notice1.date`] = new Date().toISOString().split('T')[0];
+      translations.en[`${pageId}.notice1.content`] = "Enter the announcement content.";
+      
+      // 공지사항 visibility 및 배지 설정
+      commonVisibility[`${pageId}.notice1.visible`] = true;
+      commonVisibility[`${pageId}.notice1.isImportant`] = false;
+      commonVisibility[`${pageId}.notice1.isNew`] = false;
     }
     
     // 페이지 레이아웃 메타데이터 설정
@@ -3155,6 +3293,7 @@ export function LanguageProvider({
     updatePageData,
     getPageLayout,
     setPageLayout,
+    getTranslationKey, // 🆕 번역 키 가져오기
     addCategory,
     addPage,
     deleteCategory,
@@ -3182,10 +3321,7 @@ export function LanguageProvider({
           console.log('[LanguageProvider] Rendering loading screen');
           return (
             <div className="flex items-center justify-center min-h-screen">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
-                <p className="text-muted-foreground">매뉴얼 데이터 로딩 중...</p>
-              </div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
             </div>
           );
         })()

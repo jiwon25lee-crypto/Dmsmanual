@@ -159,14 +159,6 @@ export function AddPageDialog({
                     </div>
                   </div>
                 </SelectItem>
-                <SelectItem value="tabs">
-                  <div>
-                    <div className="font-medium">탭 레이아웃 (TabPage)</div>
-                    <div className="text-xs text-muted-foreground">
-                      Overview/Features/Guide 탭
-                    </div>
-                  </div>
-                </SelectItem>
                 <SelectItem value="accordion">
                   <div>
                     <div className="font-medium">아코디언 레이아웃 (NoticeListPage)</div>

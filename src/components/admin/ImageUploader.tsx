@@ -107,10 +107,22 @@ export function ImageUploader({
         }
       );
 
-      const result = await response.json();
+      // ✅ 응답 텍스트 먼저 확인
+      const responseText = await response.text();
+      console.log('[ImageUploader] Response status:', response.status);
+      console.log('[ImageUploader] Response text:', responseText);
+
+      // JSON 파싱 시도
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('[ImageUploader] JSON parse error:', parseError);
+        throw new Error(`서버 응답 파싱 실패: ${responseText.substring(0, 100)}`);
+      }
 
       if (!response.ok || !result.success) {
-        throw new Error(result.error || "업로드 실패");
+        throw new Error(result.error || `업로드 실패 (${response.status})`);
       }
 
       // 업로드 성공

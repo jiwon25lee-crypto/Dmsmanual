@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { ImageContainer } from "../common/PageComponents";
 
 interface StartFeaturesPageProps {
+  pageId?: string; // ✅ 추가: 동적 페이지 ID
   onSectionChange: (sectionId: string) => void;
 }
 
@@ -18,18 +19,30 @@ const CATEGORY_ICONS: Record<string, string> = {
   notice: "📢",
 };
 
-export function StartFeaturesPage({ onSectionChange }: StartFeaturesPageProps) {
+export function StartFeaturesPage({ pageId = "start-features", onSectionChange }: StartFeaturesPageProps) {
   const { t, getAllCategories, getPagesByCategory } = useLanguage();
+
+  // 🆕 Helper functions
+  const getImageUrl = (key: string): string => {
+    const url = t(key) as string;
+    return url && url !== key ? url : "";
+  };
+
+  const hasHeaderImage = (): boolean => {
+    const headerImageEnabled = t(`${pageId}.header-image-enabled`) === true;
+    const headerImageUrl = getImageUrl(`${pageId}.header-image`);
+    return headerImageEnabled && !!headerImageUrl;
+  };
 
   // 🆕 Feature 카드 동적 로드 (feature1~feature10)
   const featureCards = [];
   for (let i = 1; i <= 10; i++) {
-    const titleKey = `start-features.feature${i}.title`;
+    const titleKey = `${pageId}.feature${i}.title`;
     const title = t(titleKey) as string;
     
     // Feature가 존재하는 경우 (제목이 키가 아닌 실제 값인지 체크)
     if (title && title !== titleKey) {
-      const visibleValue = t(`start-features.feature${i}.visible`);
+      const visibleValue = t(`${pageId}.feature${i}.visible`);
       
       // visible이 명시적으로 true인 경우만 표시
       if (visibleValue === true) {
@@ -37,16 +50,16 @@ export function StartFeaturesPage({ onSectionChange }: StartFeaturesPageProps) {
           id: `feature-${i}`,
           number: i,
           title: title,
-          desc: (t(`start-features.feature${i}.desc`) || "") as string,
-          icon: (t(`start-features.feature${i}.icon`) || "📄") as string,
+          desc: (t(`${pageId}.feature${i}.desc`) || "") as string,
+          icon: (t(`${pageId}.feature${i}.icon`) || "📄") as string,
           // 🆕 클릭 시 이동할 섹션 ID
-          link: (t(`start-features.feature${i}.link`) || "") as string,
+          link: (t(`${pageId}.feature${i}.link`) || "") as string,
         });
       }
     }
   }
   
-  console.log('[StartFeaturesPage] Loaded feature cards:', featureCards);
+  console.log(`[StartFeaturesPage] PageID: ${pageId}, Loaded feature cards:`, featureCards);
 
   // 🔄 Fallback: Feature 카드가 없으면 동적 대메뉴 카드 표시
   const allCategories = getAllCategories();
@@ -70,18 +83,18 @@ export function StartFeaturesPage({ onSectionChange }: StartFeaturesPageProps) {
 
   return (
     <>
-      <h1 className="mb-6">{t("start-features.title")}</h1>
+      <h1 className="mb-6">{t(`${pageId}.title`)}</h1>
 
       {/* 최상단 이미지 */}
-      {t("start-features.header-image") && (
+      {hasHeaderImage() && (
         <ImageContainer
-          src={t("start-features.header-image") as string}
-          alt={t("start-features.title") as string}
+          src={getImageUrl(`${pageId}.header-image`) as string}
+          alt={t(`${pageId}.title`) as string}
         />
       )}
 
       <p className="text-foreground mb-8 leading-relaxed">
-        {t("start-features.intro")}
+        {t(`${pageId}.intro`)}
       </p>
 
       {/* 대메뉴 바로가기 카드 */}
@@ -157,15 +170,17 @@ export function StartFeaturesPage({ onSectionChange }: StartFeaturesPageProps) {
         )}
       </div>
 
-      {/* 하단 안내 텍스트 */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <p className="text-foreground leading-relaxed">
-          💡 <span className="font-semibold">{t("start-features.tip-title")}</span>
-        </p>
-        <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-          {t("start-features.tip-desc")}
-        </p>
-      </div>
+      {/* ✅ 하단 안내 텍스트 (조건부 렌더링) */}
+      {t(`${pageId}.tip-visible`) === true && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <p className="text-foreground leading-relaxed">
+            💡 <span className="font-semibold">{t(`${pageId}.tip-title`)}</span>
+          </p>
+          <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+            {t(`${pageId}.tip-desc`)}
+          </p>
+        </div>
+      )}
     </>
   );
 }
