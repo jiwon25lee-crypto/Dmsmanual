@@ -1,0 +1,277 @@
+/* SF Pro Font */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Typography */
+  --font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", system-ui, sans-serif;
+
+  /* Figma Design Tokens - Colors (5 colors only) */
+  --black: #000000;
+  --dark-gray: #242424;
+  --light-gray: #c2c2b8;
+  --off-white: #f8f8f8;
+  --white: #ffffff;
+
+  /* Brand Color */
+  --brand: #132800;
+
+  /* Figma Design Tokens - Point Colors (Status Indicators) */
+  --point-red: #fce8e9;
+  --point-yellow: #fffbe6;
+  --point-green: #dff0e4;
+  --point-stroke: #d9d9d9;
+
+  /* Figma Design Tokens - Typography (6 styles only) */
+  --heading-1: 28px;
+  --heading-2: 22px;
+  --body-1: 16px;
+  --body-2: 14px;
+  --button-text: 16px;
+  --caption: 12px;
+
+  /* Font Weights */
+  --weight-bold: 800;
+  --weight-semibold: 600;
+  --weight-regular: 400;
+
+  /* Semantic Color Mapping (for Shadcn UI compatibility) */
+  --background: var(--off-white);
+  --foreground: var(--black);
+  --card: var(--white);
+  --card-foreground: var(--black);
+  --popover: var(--white);
+  --popover-foreground: var(--black);
+  --primary: var(--black);
+  --primary-foreground: var(--white);
+  --secondary: var(--off-white);
+  --secondary-foreground: var(--black);
+  --muted: var(--off-white);
+  --muted-foreground: var(--dark-gray);
+  --accent: var(--off-white);
+  --accent-foreground: var(--black);
+  --destructive: #d4183d;
+  --destructive-foreground: var(--white);
+  --border: var(--light-gray);
+  --input: transparent;
+  --input-background: var(--white);
+  --ring: var(--dark-gray);
+  --switch-background: var(--light-gray);
+  --btn-bg-black: var(--black);
+  --btn-bg-light: var(--off-white);
+
+  /* Border Radius */
+  --radius: 0.625rem;
+
+  /* Sidebar Semantic Mapping */
+  --sidebar: var(--white);
+  --sidebar-foreground: var(--black);
+  --sidebar-primary: var(--black);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--off-white);
+  --sidebar-accent-foreground: var(--black);
+  --sidebar-border: var(--light-gray);
+  --sidebar-ring: var(--dark-gray);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--dark-gray);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --color-switch-background: var(--switch-background);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(
+    --sidebar-primary-foreground
+  );
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(
+    --sidebar-accent-foreground
+  );
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-brand: var(--brand);
+  --color-light-gray: var(--light-gray);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family);
+  }
+
+  /* Card Component - Brand Border & Drop Shadow */
+  [data-slot="card"] {
+    border-color: var(--brand) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Tabs Component - Brand Color Active State */
+  [data-slot="tabs-trigger"][data-state="active"] {
+    background-color: var(--brand) !important;
+    color: var(--white) !important;
+    border-color: transparent !important;
+  }
+}
+
+/* Figma Typography System - Exact Match */
+@layer base {
+  h1 {
+    font-size: var(--heading-1);
+    font-weight: var(--weight-bold);
+    line-height: 1.2;
+    color: var(--brand);
+  }
+
+  h2 {
+    font-size: var(--heading-2);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+    color: var(--brand);
+  }
+
+  h3 {
+    font-size: var(--body-1);
+    font-weight: var(--weight-semibold);
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-size: var(--body-2);
+    font-weight: var(--weight-semibold);
+    line-height: 1.4;
+  }
+
+  p {
+    font-size: var(--body-1);
+    font-weight: var(--weight-regular);
+    line-height: 1.4;
+  }
+
+  label {
+    font-size: var(--body-2);
+    font-weight: var(--weight-regular);
+    line-height: 1.4;
+  }
+
+  button {
+    font-size: var(--button-text);
+    font-weight: var(--weight-regular);
+    line-height: 1.4;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: var(--body-2);
+    font-weight: var(--weight-regular);
+    line-height: 1.4;
+  }
+
+  small {
+    font-size: var(--caption);
+    font-weight: var(--weight-regular);
+    line-height: 1.4;
+  }
+}
+
+/* ============================================
+   Tailwind 유틸리티 클래스 강제 Override
+   - Shadcn UI 컴포넌트에 globals.css 타이포그래피 강제 적용
+   ============================================ */
+@layer utilities {
+  /* Font Weight Override - 모든 weight를 400으로 통일 */
+  .font-medium {
+    font-weight: var(--weight-regular) !important;
+  }
+
+  .font-semibold {
+    font-weight: var(--weight-regular) !important;
+  }
+
+  .font-bold {
+    font-weight: var(--weight-regular) !important;
+  }
+
+  /* Font Size Override - Figma 디자인 토큰으로 통일 */
+  .text-xs {
+    font-size: var(--caption) !important; /* 12px */
+  }
+
+  .text-sm {
+    font-size: var(--body-2) !important; /* 14px */
+  }
+
+  .text-base {
+    font-size: var(--body-1) !important; /* 16px */
+  }
+
+  .text-lg {
+    font-size: var(--heading-2) !important; /* 22px */
+  }
+
+  .text-xl {
+    font-size: var(--heading-1) !important; /* 28px */
+  }
+
+  .text-2xl {
+    font-size: var(--heading-1) !important; /* 28px */
+  }
+
+  /* ============================================
+     Figma Effect Shadows (from Effect.tsx)
+     - SVG 필터를 CSS box-shadow로 변환
+     ============================================ */
+
+  /* Effect 1: Basic Drop Shadow (filter0_d_28_130) */
+  .effect-shadow-sm {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Effect 2: Double Drop Shadow (filter1_dd_28_130) */
+  .effect-shadow-lg {
+    box-shadow:
+      0 24px 48px rgba(145, 158, 171, 0.24),
+      0 0 4px rgba(145, 158, 171, 0.24);
+  }
+
+  /* Effect 3: Combined (Both Effects) */
+  .effect-shadow-combined {
+    box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.25),
+      0 24px 48px rgba(145, 158, 171, 0.24),
+      0 0 4px rgba(145, 158, 171, 0.24);
+  }
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
