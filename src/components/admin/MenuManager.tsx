@@ -19,6 +19,7 @@ import {
 } from "../../config/pages";
 import { AddMenuDialog } from "./AddMenuDialog";
 import { AddPageDialog } from "./AddPageDialog";
+import { EditCategoryDialog } from "./EditCategoryDialog";
 
 interface MenuManagerProps {
   onEditPage: (pageId: string) => void;
@@ -35,13 +36,15 @@ function DraggableCategory({
   index, 
   isSelected, 
   onClick, 
+  onEdit,
   onDelete, 
   moveCategory 
 }: { 
   category: any; 
   index: number; 
   isSelected: boolean; 
-  onClick: () => void; 
+  onClick: () => void;
+  onEdit: () => void;
   onDelete: () => void;
   moveCategory: (dragIndex: number, hoverIndex: number) => void;
 }) {
@@ -65,19 +68,26 @@ function DraggableCategory({
 
   return (
     <div
-      ref={(node) => drag(drop(node))}
+      ref={drop}
       className={`
-        flex items-center justify-between p-3 rounded-lg border cursor-pointer
+        flex items-center justify-between p-3 rounded-lg border
         transition-all hover:border-brand
         ${isSelected ? "border-brand bg-green-50" : "border-border"}
         ${isDragging ? "opacity-50" : "opacity-100"}
       `}
     >
       <div 
-        className="flex items-center gap-3 flex-1"
+        className="flex items-center gap-3 flex-1 cursor-pointer"
         onClick={onClick}
       >
-        <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+        {/* 드래그 핸들 (GripVertical만 드래그 가능) */}
+        <div
+          ref={drag}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </div>
         <div className="flex-1">
           <p className="font-medium text-foreground">{category.name}</p>
           <p className="text-xs text-muted-foreground">
@@ -86,17 +96,28 @@ function DraggableCategory({
         </div>
         <ChevronRight className="w-4 h-4 text-muted-foreground" />
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        className="ml-2"
-      >
-        <Trash2 className="w-4 h-4 text-red-500" />
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+        >
+          <Edit className="w-4 h-4 text-blue-500" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        >
+          <Trash2 className="w-4 h-4 text-red-500" />
+        </Button>
+      </div>
     </div>
   );
 }
@@ -135,7 +156,7 @@ function DraggablePage({
 
   return (
     <div
-      ref={(node) => drag(drop(node))}
+      ref={drop}
       className={`
         flex items-center justify-between p-4 rounded-lg border border-border 
         hover:border-brand transition-all
@@ -143,7 +164,13 @@ function DraggablePage({
       `}
     >
       <div className="flex items-center gap-3 flex-1">
-        <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+        {/* 드래그 핸들 (GripVertical만 드래그 가능) */}
+        <div
+          ref={drag}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded"
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </div>
         <div className="flex-1">
           <p className="font-medium text-foreground">{page.title}</p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -175,7 +202,8 @@ function DraggablePage({
 function MenuManagerContent({ onEditPage }: MenuManagerProps) {
   const { 
     t, 
-    addCategory, 
+    addCategory,
+    updateCategory, // 🆕 대메뉴명 수정
     addPage, 
     deleteCategory, 
     deletePage, 
@@ -184,11 +212,14 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
     getPageLayout, // 🆕 레이아웃 가져오기
     reorderCategories,
     reorderPages,
-    saveChanges // 🆕 수동 저장
+    saveChanges, // 🆕 수동 저장
+    getTranslation // 🆕 특정 언어 번역 가져오기
   } = useLanguage();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [addMenuDialogOpen, setAddMenuDialogOpen] = useState(false);
+  const [editCategoryDialogOpen, setEditCategoryDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<{ id: string; nameKo: string; nameEn: string } | null>(null);
   const [addPageDialogOpen, setAddPageDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -295,6 +326,24 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
     alert(`소메뉴 "${data.nameKo}"가 추가되었습니다!`);
   };
 
+  // 🆕 대메뉴명 수정 핸들러
+  const handleEditCategory = (categoryId: string) => {
+    const nameKo = getTranslation(`category.${categoryId}`, 'ko') as string;
+    const nameEn = getTranslation(`category.${categoryId}`, 'en') as string;
+    
+    setEditingCategory({ id: categoryId, nameKo, nameEn });
+    setEditCategoryDialogOpen(true);
+  };
+
+  // 🆕 대메뉴명 수정 완료
+  const handleEditCategorySubmit = (data: { nameKo: string; nameEn: string }) => {
+    if (!editingCategory) return;
+    
+    updateCategory(editingCategory.id, data.nameKo, data.nameEn);
+    toast.success(`대메뉴 \"${data.nameKo}\"가 수정되었습니다.`);
+    setEditingCategory(null);
+  };
+
   // 🆕 대메뉴 삭제 핸들러
   const handleDeleteCategory = (categoryId: string, categoryName: string) => {
     const pageCount = getDynamicPagesByCategory(categoryId).length;
@@ -363,6 +412,7 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
                 index={index}
                 isSelected={selectedCategory === category.id}
                 onClick={() => setSelectedCategory(category.id)}
+                onEdit={() => handleEditCategory(category.id)}
                 onDelete={() => handleDeleteCategory(category.id, category.name)}
                 moveCategory={moveCategory}
               />
@@ -432,6 +482,18 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
           categoryId={selectedCategory}
           categoryName={t(`category.${selectedCategory}`) as string}
           onAdd={handleAddPage}
+        />
+      )}
+
+      {/* 대메뉴명 수정 다이얼로그 */}
+      {editingCategory && (
+        <EditCategoryDialog
+          open={editCategoryDialogOpen}
+          onOpenChange={setEditCategoryDialogOpen}
+          categoryId={editingCategory.id}
+          currentNameKo={editingCategory.nameKo}
+          currentNameEn={editingCategory.nameEn}
+          onEdit={handleEditCategorySubmit}
         />
       )}
     </>

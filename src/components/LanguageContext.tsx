@@ -31,6 +31,7 @@ interface LanguageContextType {
   setPageLayout: (pageId: string, layout: PageLayout) => void; // 🆕 레이아웃 설정
   getTranslationKey: (pageId: string) => string; // 🆕 번역 키 가져오기 (pageId와 다를 수 있음)
   addCategory: (id: string, nameKo: string, nameEn: string) => void; // 🆕 대메뉴 추가
+  updateCategory: (categoryId: string, nameKo: string, nameEn: string) => void; // 🆕 대메뉴명 수정
   addPage: (pageId: string, nameKo: string, nameEn: string, layout: PageLayout) => void; // 🆕 소메뉴 추가
   deleteCategory: (categoryId: string) => void; // 🆕 대메뉴 삭제
   deletePage: (pageId: string) => void; // 🆕 소메뉴 삭제
@@ -2982,6 +2983,20 @@ export function LanguageProvider({
     console.log('[LanguageContext] Category added successfully');
   };
 
+  // 🆕 대메뉴명 수정 (ID는 변경 불가, 이름만 수정)
+  const updateCategory = (categoryId: string, nameKo: string, nameEn: string) => {
+    console.log('[LanguageContext] Updating category:', { categoryId, nameKo, nameEn });
+    
+    // 대메뉴명 번역 업데이트
+    translations.ko[`category.${categoryId}`] = nameKo;
+    translations.en[`category.${categoryId}`] = nameEn;
+    
+    // 리렌더링 트리거
+    setUpdateTrigger(prev => prev + 1);
+    
+    console.log('[LanguageContext] Category updated successfully');
+  };
+
   // 🆕 소메뉴(페이지) 추가
   const addPage = (pageId: string, nameKo: string, nameEn: string, layout: PageLayout) => {
     console.log('[LanguageContext] Adding page:', { pageId, nameKo, nameEn, layout });
@@ -3295,6 +3310,7 @@ export function LanguageProvider({
     setPageLayout,
     getTranslationKey, // 🆕 번역 키 가져오기
     addCategory,
+    updateCategory,
     addPage,
     deleteCategory,
     deletePage,

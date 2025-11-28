@@ -4,6 +4,7 @@
  * - 파일 선택 버튼
  * - 미리보기
  * - Supabase Storage 업로드
+ * - 🆕 자동 이미지 최적화 (압축 + 리사이징)
  */
 
 import { useState, useRef } from "react";
@@ -12,6 +13,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { projectId, publicAnonKey } from "../../utils/supabase/info";
+import imageCompression from "browser-image-compression";
 
 interface ImageUploaderProps {
   pageId?: string;
@@ -30,8 +32,10 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false); // 🆕 압축 중 상태
   const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
   const [error, setError] = useState<string | null>(null);
+  const [compressionInfo, setCompressionInfo] = useState<string | null>(null); // 🆕 압축 정보
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -74,18 +78,58 @@ export function ImageUploader({
 
     setError(null);
     setIsUploading(true);
+    setIsCompressing(true); // 🆕 압축 중 상태 설정
 
     try {
+      // 🆕 원본 파일 크기 저장
+      const originalSize = file.size;
+
+      // 🆕 이미지 최적화 (압축 + 리사이징)
+      let compressedFile = file; // 기본값: 원본 파일
+      let compressionSucceeded = false;
+      
+      try {
+        const options = {
+          maxSizeMB: 0.5,          // 최대 500KB
+          maxWidthOrHeight: 1920,  // 최대 1920px (매뉴얼 이미지에 적합)
+          useWebWorker: true,      // 백그라운드에서 처리 (UI 블로킹 방지)
+        };
+        compressedFile = await imageCompression(file, options);
+        compressionSucceeded = true;
+      } catch (compressionError) {
+        console.warn('[ImageUploader] Compression failed, using original file:', compressionError);
+        // 압축 실패 시 원본 파일 사용 (에러 발생 안 함)
+        compressedFile = file;
+      }
+
+      setIsCompressing(false); // 🆕 압축 완료
+
+      // 🆕 압축 정보 계산 및 표시
+      if (compressionSucceeded && compressedFile.size < originalSize) {
+        const originalMB = (originalSize / 1024 / 1024).toFixed(2);
+        const compressedMB = (compressedFile.size / 1024 / 1024).toFixed(2);
+        const reduction = Math.round((1 - compressedFile.size / originalSize) * 100);
+        
+        setCompressionInfo(
+          `✅ 최적화 완료: ${originalMB}MB → ${compressedMB}MB (${reduction}% 감소)`
+        );
+      } else if (compressionSucceeded) {
+        // 압축했지만 크기가 같거나 더 큰 경우 (이미 최적화된 이미지)
+        setCompressionInfo(
+          `ℹ️ 이미 최적화된 이미지입니다 (${(originalSize / 1024 / 1024).toFixed(2)}MB)`
+        );
+      }
+
       // 로컬 미리보기
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreview(e.target?.result as string);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(compressedFile);
 
       // Supabase Storage에 업로드
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       
       // 페이지ID를 기반으로 경로 생성
       const timestamp = Date.now();
@@ -134,6 +178,7 @@ export function ImageUploader({
       setError(err instanceof Error ? err.message : "업로드 중 오류가 발생했습니다.");
     } finally {
       setIsUploading(false);
+      setIsCompressing(false); // 🆕 압축 중 상태 해제
     }
   };
 
@@ -183,7 +228,9 @@ export function ImageUploader({
           {isUploading ? (
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-8 h-8 text-brand animate-spin" />
-              <p className="text-sm text-muted-foreground">업로드 중...</p>
+              <p className="text-sm text-muted-foreground">
+                {isCompressing ? "이미지 최적화 중..." : "업로드 중..."}
+              </p>
             </div>
           ) : (
             <>
@@ -219,6 +266,23 @@ export function ImageUploader({
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3">
           <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* 압축 정보 */}
+      {compressionInfo && (
+        <div className={`border rounded-lg p-3 ${
+          compressionInfo.startsWith('✅') 
+            ? 'bg-green-50 border-green-200' 
+            : 'bg-blue-50 border-blue-200'
+        }`}>
+          <p className={`text-sm ${
+            compressionInfo.startsWith('✅') 
+              ? 'text-green-600' 
+              : 'text-blue-600'
+          }`}>
+            {compressionInfo}
+          </p>
         </div>
       )}
     </div>
