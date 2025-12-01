@@ -740,8 +740,8 @@ export function PageEditor({ pageId }: PageEditorProps) {
                 onClick={() => {
                   const newStep: StepData = {
                     number: pageData.steps.length + 1,
-                    visible: true,
-                    imageVisible: true,
+                    visible: false, // 🔧 기본값 false로 변경
+                    imageVisible: false, // 🔧 기본값 false로 변경
                     title: { ko: "", en: "" },
                     desc: { ko: "", en: "" },
                     image: { ko: "", en: "" },

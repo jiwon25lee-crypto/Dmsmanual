@@ -28,7 +28,10 @@ export function DefaultPage({
   };
 
   const isStepVisible = (stepNum: number): boolean => {
-    return t(`${pageId}.step${stepNum}.visible`) === true;
+    const visible = t(`${pageId}.step${stepNum}.visible`) === true;
+    const title = t(`${pageId}.step${stepNum}.title`) as string;
+    // ✅ visible이 true이고, title이 실제로 존재해야 표시
+    return visible && !!title && title !== `${pageId}.step${stepNum}.title`;
   };
 
   const isStepImageVisible = (stepNum: number): boolean => {
