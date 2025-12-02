@@ -43,6 +43,7 @@ interface LanguageContextType {
   saveChanges: () => Promise<boolean>; // 🆕 수동 저장
   getTranslation: (key: string, lang: Language) => string | boolean | undefined; // 🆕 특정 언어 번역 가져오기
   updateTrigger: number; // 🆕 업데이트 트리거 (PageEditor 리로드용)
+  cleanupOrphanedData: () => Promise<{ orphanedCount: number; imageCount: number }>; // 🆕 고아 데이터 정리
 }
 
 const LanguageContext = createContext<
@@ -3525,6 +3526,140 @@ export function LanguageProvider({
     return translations[lang][key];
   };
 
+  // 🆕 고아 데이터 정리 (Admin 메뉴에 없는 페이지 데이터 삭제)
+  const cleanupOrphanedData = useCallback(async () => {
+    console.log('[LanguageContext] Starting orphaned data cleanup...');
+    
+    // 1. 현재 menuStructure에 있는 페이지 ID 수집
+    const categories = getAllCategories();
+    const validPageIds = new Set<string>();
+    
+    categories.forEach(categoryId => {
+      const pages = getPagesByCategory(categoryId);
+      pages.forEach(pageId => validPageIds.add(pageId));
+    });
+    
+    console.log('[LanguageContext] Valid pages:', Array.from(validPageIds));
+    
+    // 2. translations에서 고아 페이지 키 찾기
+    const orphanedKeys: string[] = [];
+    const orphanedImages: string[] = [];
+    
+    ['ko', 'en'].forEach((lang) => {
+      Object.keys(translations[lang as Language]).forEach(key => {
+        // 시스템 키는 건너뛰기
+        if (key.startsWith('__pageOrder.') || 
+            key.startsWith('category.') || 
+            key.startsWith('section.')) {
+          return;
+        }
+        
+        // 페이지 키 추출
+        const pageId = key.split('.')[0];
+        
+        // validPageIds에 없는 페이지는 고아
+        if (!validPageIds.has(pageId)) {
+          orphanedKeys.push(key);
+          
+          // 이미지 URL 수집
+          if ((key.endsWith('.image') || key.endsWith('.header-image')) && 
+              typeof translations[lang as Language][key] === 'string' &&
+              (translations[lang as Language][key] as string).includes('make-8aea8ee5-manual-images')) {
+            const imageUrl = translations[lang as Language][key] as string;
+            if (!orphanedImages.includes(imageUrl)) {
+              orphanedImages.push(imageUrl);
+            }
+          }
+        }
+      });
+    });
+    
+    // 3. commonVisibility에서 고아 키 찾기
+    Object.keys(commonVisibility).forEach(key => {
+      const pageId = key.split('.')[0];
+      if (!validPageIds.has(pageId)) {
+        orphanedKeys.push(key);
+      }
+    });
+    
+    // 4. pageMetadata에서 고아 페이지 찾기
+    Object.keys(pageMetadata).forEach(pageId => {
+      if (!validPageIds.has(pageId)) {
+        orphanedKeys.push(`metadata:${pageId}`);
+      }
+    });
+    
+    const orphanedPageIds = new Set(orphanedKeys.map(k => k.split('.')[0]));
+    const orphanedCount = orphanedPageIds.size;
+    const imageCount = orphanedImages.length;
+    
+    console.log('[LanguageContext] Cleanup summary:', {
+      orphanedPages: orphanedCount,
+      orphanedKeys: orphanedKeys.length,
+      orphanedImages: imageCount,
+      validPages: validPageIds.size
+    });
+    
+    // 5. 데이터 삭제
+    if (orphanedKeys.length > 0) {
+      // translations 정리
+      orphanedKeys.forEach(key => {
+        if (key.startsWith('metadata:')) {
+          const pageId = key.replace('metadata:', '');
+          delete pageMetadata[pageId];
+        } else {
+          delete translations.ko[key];
+          delete translations.en[key];
+          delete commonVisibility[key];
+        }
+      });
+      
+      console.log('[LanguageContext] ✅ Cleaned up orphaned data');
+      
+      // 6. Supabase에 저장
+      const saveResult = await saveToSupabase();
+      
+      if (!saveResult) {
+        console.error('[LanguageContext] ❌ Failed to save after cleanup');
+        throw new Error('데이터 정리 후 저장 실패');
+      }
+      
+      // 7. 이미지 삭제 (비동기)
+      if (orphanedImages.length > 0) {
+        console.log(`[LanguageContext] Deleting ${orphanedImages.length} orphaned images...`);
+        
+        orphanedImages.forEach(async (imageUrl) => {
+          try {
+            const response = await fetch(
+              `https://${projectId}.supabase.co/functions/v1/make-server-8aea8ee5/admin/delete-image`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${publicAnonKey}`,
+                },
+                body: JSON.stringify({ imageUrl }),
+              }
+            );
+            
+            if (response.ok) {
+              console.log('[LanguageContext] Image deleted:', imageUrl);
+            } else {
+              console.warn('[LanguageContext] Image delete failed:', imageUrl);
+            }
+          } catch (error) {
+            console.warn('[LanguageContext] Image delete error (ignored):', error);
+          }
+        });
+      }
+      
+      // 리렌더링 트리거
+      setUpdateTrigger(prev => prev + 1);
+    }
+    
+    return { orphanedCount, imageCount };
+  }, [saveToSupabase]);
+
   // ✅ Context value를 useMemo로 최적화
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const contextValue = useMemo(() => ({
@@ -3550,7 +3685,8 @@ export function LanguageProvider({
     getTranslation,
     loadFromSupabase, // 🆕 강제 갱신용
     updateTrigger, // 🆕 업데이트 트리거 제공
-  }), [language, t, updateTranslation, saveToSupabase, loadFromSupabase, updateTrigger]);
+    cleanupOrphanedData, // 🆕 고아 데이터 정리
+  }), [language, t, updateTranslation, saveToSupabase, loadFromSupabase, updateTrigger, cleanupOrphanedData]);
 
   console.log('[LanguageProvider] Render decision:', { 
     isLoading, 

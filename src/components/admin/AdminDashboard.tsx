@@ -13,7 +13,8 @@ import { useLanguage } from "../LanguageContext";
 export function AdminDashboard() {
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const { language } = useLanguage();
+  const [isCleaning, setIsCleaning] = useState(false);
+  const { language, cleanupOrphanedData, getAllPages } = useLanguage();
 
   console.log('[AdminDashboard] Rendering...', { editingPageId });
   
@@ -28,13 +29,17 @@ export function AdminDashboard() {
       title: 'DMS 매뉴얼',
       manualLink: 'DMS 매뉴얼 바로가기',
       csvDownload: 'CSV 다운로드',
-      downloading: '다운로드 중...'
+      downloading: '다운로드 중...',
+      cleanupData: '데이터 정리',
+      cleaning: '정리 중...'
     },
     en: {
       title: 'DMS Manual',
       manualLink: 'Go to DMS Manual',
       csvDownload: 'CSV Download',
-      downloading: 'Downloading...'
+      downloading: 'Downloading...',
+      cleanupData: 'Cleanup Data',
+      cleaning: 'Cleaning...'
     }
   };
 
@@ -72,11 +77,75 @@ export function AdminDashboard() {
       document.body.removeChild(link);
       
       console.log('[AdminDashboard] CSV downloaded successfully');
+      return true;
     } catch (error) {
       console.error('[AdminDashboard] CSV download error:', error);
       alert('CSV 다운로드 중 오류가 발생했습니다.');
+      return false;
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  // 🆕 데이터 정리 핸들러
+  const handleCleanupData = async () => {
+    try {
+      // 1차 컨펌 - 백업 권장
+      const confirmBackup = window.confirm(
+        '⚠️ Admin 데이터와 서버 데이터를 동기화하시겠습니까?\n\n' +
+        'Admin에서 제거한 데이터가 완전히 삭제되며 복구할 수 없습니다.\n\n' +
+        '계속하기 전에 CSV 백업을 다운로드하시겠습니까?\n' +
+        '(강력 권장)'
+      );
+      
+      if (!confirmBackup) {
+        return;
+      }
+      
+      // CSV 백업 다운로드
+      console.log('[AdminDashboard] Downloading backup before cleanup...');
+      const downloadSuccess = await handleDownloadCSV();
+      
+      if (!downloadSuccess) {
+        alert('백업 다운로드에 실패했습니다. 데이터 정리를 중단합니다.');
+        return;
+      }
+      
+      // 2차 컨펌 - 최종 확인
+      const confirmCleanup = window.confirm(
+        '🚨 최종 확인\n\n' +
+        'CSV 백업이 완료되었습니다.\n\n' +
+        '이제 Admin 메뉴에 없는 모든 페이지 데이터가 서버에서 영구 삭제됩니다.\n' +
+        '⚠️ 이 작업은 되돌릴 수 없습니다.\n\n' +
+        '정말로 데이터를 정리하시겠습니까?'
+      );
+      
+      if (!confirmCleanup) {
+        return;
+      }
+      
+      // 데이터 정리 실행
+      setIsCleaning(true);
+      console.log('[AdminDashboard] Starting data cleanup...');
+      
+      const result = await cleanupOrphanedData();
+      
+      console.log('[AdminDashboard] Cleanup completed:', result);
+      
+      alert(
+        `✅ 데이터 정리 완료\n\n` +
+        `삭제된 페이지: ${result.orphanedCount}개\n` +
+        `삭제된 이미지: ${result.imageCount}개\n\n` +
+        `서버 데이터가 Admin과 완전히 동기화되었습니다.`
+      );
+      
+      // 페이지 새로고침으로 UI 갱신
+      window.location.reload();
+    } catch (error) {
+      console.error('[AdminDashboard] Cleanup error:', error);
+      alert('데이터 정리 중 오류가 발생했습니다.\n\n' + (error instanceof Error ? error.message : String(error)));
+    } finally {
+      setIsCleaning(false);
     }
   };
 
@@ -124,12 +193,22 @@ export function AdminDashboard() {
               {t.title}
             </h1>
             <div className="flex items-center gap-3">
+              {/* 🆕 데이터 정리 버튼 */}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleCleanupData}
+                disabled={isCleaning || isDownloading}
+              >
+                ⚠️ {isCleaning ? t.cleaning : t.cleanupData}
+              </Button>
+              
               {/* CSV 다운로드 버튼 */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleDownloadCSV}
-                disabled={isDownloading}
+                disabled={isDownloading || isCleaning}
               >
                 <Download className="w-4 h-4 mr-2" />
                 {isDownloading ? t.downloading : t.csvDownload}
