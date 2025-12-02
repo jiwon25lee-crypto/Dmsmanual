@@ -62,7 +62,7 @@ const initialPageMetadata: Record<string, PageMetadata> = {
   
   // DefaultPage (기본 레이아웃) - 대부분
   "start-login": { layout: "default" },
-  "login-admin": { layout: "default" },
+  "join-dms": { layout: "default" },
   "login-member": { layout: "default" },
   "member-register": { layout: "default" },
   "member-edit": { layout: "default" },
@@ -137,28 +137,28 @@ const commonVisibility: Record<string, boolean> = {
   "start-login.step10.image-visible": true,
 
   // ========================================
-  // 📌 login-admin (기관 대표 관리자 회원가입) - DefaultPage
+  // 📌 join-dms (기관 대표 관리자 회원가입) - DefaultPage
   // ========================================
-  "login-admin.step1.visible": true,
-  "login-admin.step1.image-visible": true,
-  "login-admin.step2.visible": true,
-  "login-admin.step2.image-visible": true,
-  "login-admin.step3.visible": true,
-  "login-admin.step3.image-visible": true,
-  "login-admin.step4.visible": true,
-  "login-admin.step4.image-visible": true,
-  "login-admin.step5.visible": true,
-  "login-admin.step5.image-visible": true,
-  "login-admin.step6.visible": true,
-  "login-admin.step6.image-visible": true,
-  "login-admin.step7.visible": true,
-  "login-admin.step7.image-visible": true,
-  "login-admin.step8.visible": true,
-  "login-admin.step8.image-visible": true,
-  "login-admin.step9.visible": true,
-  "login-admin.step9.image-visible": true,
-  "login-admin.step10.visible": true,
-  "login-admin.step10.image-visible": true,
+  "join-dms.step1.visible": true,
+  "join-dms.step1.image-visible": true,
+  "join-dms.step2.visible": true,
+  "join-dms.step2.image-visible": true,
+  "join-dms.step3.visible": true,
+  "join-dms.step3.image-visible": true,
+  "join-dms.step4.visible": true,
+  "join-dms.step4.image-visible": true,
+  "join-dms.step5.visible": true,
+  "join-dms.step5.image-visible": true,
+  "join-dms.step6.visible": true,
+  "join-dms.step6.image-visible": true,
+  "join-dms.step7.visible": true,
+  "join-dms.step7.image-visible": true,
+  "join-dms.step8.visible": true,
+  "join-dms.step8.image-visible": true,
+  "join-dms.step9.visible": true,
+  "join-dms.step9.image-visible": true,
+  "join-dms.step10.visible": true,
+  "join-dms.step10.image-visible": true,
 
   // ========================================
   // 📌 login-member (구성원 초대 및 구성원 회원 가입) - DefaultPage
@@ -660,52 +660,52 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "start-login.step10.image": "",
 
     // ========================================
-    // 📄 login-admin (기관 대표 관리자 회원가입) - DefaultPage
+    // 📄 join-dms (기관 대표 관리자 회원가입) - DefaultPage
     // ========================================
-    "login-admin.title": "기관 대표 관리자 회원가입",
-    "login-admin.intro":
+    "join-dms.title": "기관 대표 관리자 회원가입",
+    "join-dms.intro":
       "기관의 대표 관리자로 DMS에 가입하는 방법을 안내합니다. 대표 관리자는 기관의 모든 설정을 관리하고 구성원을 초대할 수 있는 최고 권한을 가집니다.",
-    "login-admin.guide-title": "기관 대표 관리자 회원가입 절차",
-    "login-admin.step1.title": "무료 체험 신청 페이지 접속",
-    "login-admin.step1.desc":
+    "join-dms.guide-title": "기관 대표 관리자 회원가입 절차",
+    "join-dms.step1.title": "무료 체험 신청 페이지 접속",
+    "join-dms.step1.desc":
       "DMS 홈페이지(https://admin.dms.doinglab.com)에 접속하여 '무료 체험' 또는 '회원가입' 버튼을 클릭합니다.",
-    "login-admin.step1.image":
+    "join-dms.step1.image":
       "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=400&fit=crop",
-    "login-admin.step2.title": "기관 정보 입력",
-    "login-admin.step2.desc":
+    "join-dms.step2.title": "기관 정보 입력",
+    "join-dms.step2.desc":
       "기관명, 사업자등록번호(선택), 기관 주소 등 기관의 기본 정보를 입력합니다.",
-    "login-admin.step2.image":
+    "join-dms.step2.image":
       "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&h=400&fit=crop",
-    "login-admin.step3.title": "대표 관리자 정보 입력",
-    "login-admin.step3.desc":
+    "join-dms.step3.title": "대표 관리자 정보 입력",
+    "join-dms.step3.desc":
       "이름, 이메일 주소, 비밀번호, 연락처를 입력합니다. 이메일 주소는 로그인 ID로 사용됩니다.",
-    "login-admin.step3.image":
+    "join-dms.step3.image":
       "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=400&fit=crop",
-    "login-admin.step4.title": "이메일 인증",
-    "login-admin.step4.desc":
+    "join-dms.step4.title": "이메일 인증",
+    "join-dms.step4.desc":
       "입력한 이메일로 발송된 인증 메일을 확인하고, '이메일 인증' 버튼을 클릭하여 본인 인증을 완료합니다.",
-    "login-admin.step4.image":
+    "join-dms.step4.image":
       "https://images.unsplash.com/photo-1579275542618-a1dfed5f54ba?w=800&h=400&fit=crop",
-    "login-admin.step5.title": "로그인 및 기관 설정",
-    "login-admin.step5.desc":
+    "join-dms.step5.title": "로그인 및 기관 설정",
+    "join-dms.step5.desc":
       "이메일 인증 완료 후 로그인하여 기관의 세부 설정(영양 기준, 알림 설정 등)을 진행합니다.",
-    "login-admin.step5.image":
+    "join-dms.step5.image":
       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop",
-    "login-admin.step6.title": "",
-    "login-admin.step6.desc": "",
-    "login-admin.step6.image": "",
-    "login-admin.step7.title": "",
-    "login-admin.step7.desc": "",
-    "login-admin.step7.image": "",
-    "login-admin.step8.title": "",
-    "login-admin.step8.desc": "",
-    "login-admin.step8.image": "",
-    "login-admin.step9.title": "",
-    "login-admin.step9.desc": "",
-    "login-admin.step9.image": "",
-    "login-admin.step10.title": "",
-    "login-admin.step10.desc": "",
-    "login-admin.step10.image": "",
+    "join-dms.step6.title": "",
+    "join-dms.step6.desc": "",
+    "join-dms.step6.image": "",
+    "join-dms.step7.title": "",
+    "join-dms.step7.desc": "",
+    "join-dms.step7.image": "",
+    "join-dms.step8.title": "",
+    "join-dms.step8.desc": "",
+    "join-dms.step8.image": "",
+    "join-dms.step9.title": "",
+    "join-dms.step9.desc": "",
+    "join-dms.step9.image": "",
+    "join-dms.step10.title": "",
+    "join-dms.step10.desc": "",
+    "join-dms.step10.image": "",
 
     // ========================================
     // 📄 login-member (구성원 초대 및 구성원 회원 가입) - DefaultPage
@@ -1042,7 +1042,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
       "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&h=400&fit=crop",
     "member-consult.step2.title": "상담 내용 작성",
     "member-consult.step2.desc":
-      "회원과의 상담 내용, 조언, 목표 설정 등을 상세하게 기록합니다.",
+      "회원과의 상담 ��용, 조언, 목표 설정 등을 상세하게 기록합니다.",
     "member-consult.step2.image":
       "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=400&fit=crop",
     "member-consult.step3.title": "상담 히스토리 조회",
@@ -1589,52 +1589,52 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "start-login.step10.image": "",
 
     // ========================================
-    // 📄 login-admin (Institution Admin Registration) - DefaultPage
+    // 📄 join-dms (Institution Admin Registration) - DefaultPage
     // ========================================
-    "login-admin.title": "Institution Admin Registration",
-    "login-admin.intro":
+    "join-dms.title": "Institution Admin Registration",
+    "join-dms.intro":
       "Guide on how to sign up as an institution admin in DMS. The admin has the highest authority to manage all institution settings and invite members.",
-    "login-admin.guide-title": "Institution Admin Registration Process",
-    "login-admin.step1.title": "Access Free Trial Page",
-    "login-admin.step1.desc":
+    "join-dms.guide-title": "Institution Admin Registration Process",
+    "join-dms.step1.title": "Access Free Trial Page",
+    "join-dms.step1.desc":
       "Visit the DMS homepage (https://admin.dms.doinglab.com) and click the 'Free Trial' or 'Sign Up' button.",
-    "login-admin.step1.image":
+    "join-dms.step1.image":
       "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=400&fit=crop",
-    "login-admin.step2.title": "Enter Institution Information",
-    "login-admin.step2.desc":
+    "join-dms.step2.title": "Enter Institution Information",
+    "join-dms.step2.desc":
       "Enter institution name, business registration number (optional), institution address, and other basic information.",
-    "login-admin.step2.image":
+    "join-dms.step2.image":
       "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&h=400&fit=crop",
-    "login-admin.step3.title": "Enter Admin Information",
-    "login-admin.step3.desc":
+    "join-dms.step3.title": "Enter Admin Information",
+    "join-dms.step3.desc":
       "Enter name, email address, password, and contact information. The email address will be used as the login ID.",
-    "login-admin.step3.image":
+    "join-dms.step3.image":
       "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=400&fit=crop",
-    "login-admin.step4.title": "Email Verification",
-    "login-admin.step4.desc":
+    "join-dms.step4.title": "Email Verification",
+    "join-dms.step4.desc":
       "Check the verification email sent to your email address and click the 'Verify Email' button to complete verification.",
-    "login-admin.step4.image":
+    "join-dms.step4.image":
       "https://images.unsplash.com/photo-1579275542618-a1dfed5f54ba?w=800&h=400&fit=crop",
-    "login-admin.step5.title": "Login and Configure Institution",
-    "login-admin.step5.desc":
+    "join-dms.step5.title": "Login and Configure Institution",
+    "join-dms.step5.desc":
       "After email verification, log in and proceed with detailed institution settings (nutrition standards, notification settings, etc.).",
-    "login-admin.step5.image":
+    "join-dms.step5.image":
       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop",
-    "login-admin.step6.title": "",
-    "login-admin.step6.desc": "",
-    "login-admin.step6.image": "",
-    "login-admin.step7.title": "",
-    "login-admin.step7.desc": "",
-    "login-admin.step7.image": "",
-    "login-admin.step8.title": "",
-    "login-admin.step8.desc": "",
-    "login-admin.step8.image": "",
-    "login-admin.step9.title": "",
-    "login-admin.step9.desc": "",
-    "login-admin.step9.image": "",
-    "login-admin.step10.title": "",
-    "login-admin.step10.desc": "",
-    "login-admin.step10.image": "",
+    "join-dms.step6.title": "",
+    "join-dms.step6.desc": "",
+    "join-dms.step6.image": "",
+    "join-dms.step7.title": "",
+    "join-dms.step7.desc": "",
+    "join-dms.step7.image": "",
+    "join-dms.step8.title": "",
+    "join-dms.step8.desc": "",
+    "join-dms.step8.image": "",
+    "join-dms.step9.title": "",
+    "join-dms.step9.desc": "",
+    "join-dms.step9.image": "",
+    "join-dms.step10.title": "",
+    "join-dms.step10.desc": "",
+    "join-dms.step10.image": "",
 
     // ========================================
     // 📄 login-member (Member Invitation & Registration) - DefaultPage
@@ -2243,7 +2243,7 @@ const translations: Record<Language, Record<string, string | boolean>> = {
     "notice-list.title": "Service Notices",
     "notice-list.intro":
       "Check important notices about DMS service updates, terms of service changes, maintenance schedules, and more.",
-    "notice-list.badge.important": "Noti",
+    "notice-list.badge.important": "Important",
     "notice-list.badge.new": "New",
     "notice-list.empty": "No notices available.",
     "notice-list.tip-title": "Notice Notification Settings",
@@ -2394,20 +2394,21 @@ export function LanguageProvider({
   const [updateTrigger, setUpdateTrigger] = useState(0);
   // const [pageMetadata, setPageMetadata] = useState<Record<string, PageMetadata>>(initialPageMetadata);
   const [isLoading, setIsLoading] = useState(true); // 🆕 로딩 상태
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // 🆕 삭제 대기 이미지 목록
 
   // 🐛 디버깅: 렌더링 추적
   console.log('[LanguageProvider] Rendering...', { 
     language, 
     updateTrigger, 
     isLoading,
+    imagesToDeleteCount: imagesToDelete.length,
     timestamp: new Date().toISOString()
   });
 
-  // 🆕 초기 로드: Supabase에서 데이터 읽기
-  useEffect(() => {
-    const loadFromSupabase = async () => {
-      try {
-        console.log('[LanguageContext] Loading data from Supabase...');
+  // 🆕 Supabase에서 데이터 로드하는 함수 (export용)
+  const loadFromSupabase = async () => {
+    try {
+      console.log('[LanguageContext] Loading data from Supabase...');
         
         const response = await fetch(
           `https://${projectId}.supabase.co/functions/v1/make-server-8aea8ee5/manual/load`,
@@ -2442,6 +2443,35 @@ export function LanguageProvider({
           if (data.translations.en) {
             Object.assign(translations.en, data.translations.en);
           }
+          
+          // 🆕 3. 필수 키 fallback (Supabase에 없으면 하드코딩 기본값 사용)
+          const essentialKeys = {
+            ko: {
+              "notice-list.badge.important": "중요",
+              "notice-list.badge.new": "최신",
+            },
+            en: {
+              "notice-list.badge.important": "Important",
+              "notice-list.badge.new": "New",
+            }
+          };
+          
+          // 한국어 필수 키 추가
+          for (const [key, value] of Object.entries(essentialKeys.ko)) {
+            if (!translations.ko[key]) {
+              translations.ko[key] = value;
+              console.log(`[LanguageContext] ✅ Added missing essential key (ko): ${key}`);
+            }
+          }
+          
+          // 영어 필수 키 추가
+          for (const [key, value] of Object.entries(essentialKeys.en)) {
+            if (!translations.en[key]) {
+              translations.en[key] = value;
+              console.log(`[LanguageContext] ✅ Added missing essential key (en): ${key}`);
+            }
+          }
+          
           console.log('[LanguageContext] ✅ Translations replaced with Supabase data');
           console.log('[LanguageContext] KO keys:', Object.keys(translations.ko).length);
           console.log('[LanguageContext] EN keys:', Object.keys(translations.en).length);
@@ -2465,6 +2495,79 @@ export function LanguageProvider({
           console.log('[LanguageContext] ✅ PageMetadata replaced with Supabase data');
         }
         
+        // 🆕 menuStructure 처리
+        if (data.menuStructure && Array.isArray(data.menuStructure)) {
+          console.log('[LanguageContext] 🔄 Processing menuStructure...', {
+            categoryCount: data.menuStructure.length,
+            categories: data.menuStructure.map((cat: any) => cat.id)
+          });
+          
+          // menuStructure에서 카테고리 순서 추출
+          const categoryOrder = data.menuStructure.map((cat: any) => cat.id);
+          translations.ko['__categoryOrder'] = JSON.stringify(categoryOrder);
+          translations.en['__categoryOrder'] = JSON.stringify(categoryOrder);
+          console.log('[LanguageContext] ✅ Category order saved:', categoryOrder);
+          
+          // 각 카테고리의 페이지 순서 저장
+          data.menuStructure.forEach((category: any) => {
+            if (category.pages && Array.isArray(category.pages)) {
+              const orderKey = `__pageOrder.${category.id}`;
+              translations.ko[orderKey] = JSON.stringify(category.pages);
+              translations.en[orderKey] = JSON.stringify(category.pages);
+              console.log(`[LanguageContext] ✅ Page order saved for ${category.id}:`, category.pages);
+            }
+          });
+          
+          console.log('[LanguageContext] ✅ MenuStructure processed successfully');
+        } else {
+          console.log('[LanguageContext] ⚠️ No menuStructure in loaded data - Auto-generating...');
+          
+          // 🆕 menuStructure가 없으면 translations에서 자동 생성
+          const categoryKeys = Object.keys(translations.ko).filter(key => key.startsWith('category.'));
+          const detectedCategories = categoryKeys.map(key => key.replace('category.', ''));
+          console.log('[LanguageContext] 📋 Detected categories from translations:', detectedCategories);
+          
+          // 기본 순서 또는 저장된 __categoryOrder 사용
+          let categoryOrder: string[];
+          if (translations.ko['__categoryOrder']) {
+            try {
+              categoryOrder = JSON.parse(translations.ko['__categoryOrder']);
+              console.log('[LanguageContext] ✅ Using saved category order:', categoryOrder);
+            } catch (e) {
+              categoryOrder = detectedCategories;
+              console.log('[LanguageContext] ⚠️ Failed to parse category order, using detected:', categoryOrder);
+            }
+          } else {
+            categoryOrder = detectedCategories;
+            translations.ko['__categoryOrder'] = JSON.stringify(categoryOrder);
+            translations.en['__categoryOrder'] = JSON.stringify(categoryOrder);
+            console.log('[LanguageContext] ✅ Generated new category order:', categoryOrder);
+          }
+          
+          // 각 카테고리별 페이지 순서 확인/생성
+          categoryOrder.forEach(categoryId => {
+            const orderKey = `__pageOrder.${categoryId}`;
+            
+            if (!translations.ko[orderKey]) {
+              // section.{category}.{page} 형태의 키 찾기
+              const sectionPrefix = `section.${categoryId}.`;
+              const sectionKeys = Object.keys(translations.ko).filter(key => key.startsWith(sectionPrefix));
+              const pageNames = sectionKeys.map(key => key.replace(sectionPrefix, ''));
+              const pageIds = pageNames.map(pageName => `${categoryId}-${pageName}`);
+              
+              if (pageIds.length > 0) {
+                translations.ko[orderKey] = JSON.stringify(pageIds);
+                translations.en[orderKey] = JSON.stringify(pageIds);
+                console.log(`[LanguageContext] ✅ Auto-generated page order for ${categoryId}:`, pageIds);
+              }
+            } else {
+              console.log(`[LanguageContext] ✅ Using existing page order for ${categoryId}`);
+            }
+          });
+          
+          console.log('[LanguageContext] ✅ Auto-generation complete - Data will be saved on next save operation');
+        }
+        
         // 리렌더링 트리거
         setUpdateTrigger(prev => prev + 1);
         
@@ -2483,9 +2586,19 @@ export function LanguageProvider({
         console.log('  notice-list.badge.new (ko):', data.translations?.ko?.['notice-list.badge.new']);
         console.log('  notice-list.badge.important (en):', data.translations?.en?.['notice-list.badge.important']);
         console.log('  notice-list.badge.new (en):', data.translations?.en?.['notice-list.badge.new']);
+    } catch (error) {
+      console.error('[LanguageContext] Load error:', error);
+      console.log('[LanguageContext] Using default hardcoded data due to load error');
+      throw error; // 🆕 에러를 다시 던져서 호출자가 처리할 수 있도록
+    }
+  };
+
+  // 🆕 초기 로드: Supabase에서 데이터 읽기
+  useEffect(() => {
+    const initialLoad = async () => {
+      try {
+        await loadFromSupabase();
       } catch (error) {
-        console.error('[LanguageContext] Load error:', error);
-        console.log('[LanguageContext] Using default hardcoded data due to load error');
         // ❌ Supabase 로드 실패 시 기본 하드코딩 데이터 사용
         // 초기 데이터가 이미 translations, commonVisibility, pageMetadata에 있으므로
         // 별도 처리 불필요 (fallback은 자동)
@@ -2495,7 +2608,7 @@ export function LanguageProvider({
       }
     };
 
-    loadFromSupabase();
+    initialLoad();
   }, []); // 최초 1회만 실행
 
   // ✅ useMemo로 감싸서 updateTrigger, language 변경 시 새로운 함수 생성
@@ -2537,6 +2650,26 @@ export function LanguageProvider({
     
     console.log('[LanguageContext] Updating translation:', { key, value, targetLang });
     
+    // 🆕 이미지 URL 변경 감지 (삭제 대기 목록에 추가)
+    if (key.endsWith('.image') || key.endsWith('.header-image')) {
+      const oldValue = translations[targetLang][key];
+      
+      // 기존 이미지가 Storage 이미지이고, 새 값이 비어있거나 다른 URL인 경우
+      if (oldValue && 
+          typeof oldValue === 'string' && 
+          oldValue.includes('make-8aea8ee5-manual-images') &&
+          oldValue !== value) {
+        console.log('[LanguageContext] Image will be deleted on save:', oldValue);
+        setImagesToDelete(prev => {
+          // 중복 방지
+          if (!prev.includes(oldValue)) {
+            return [...prev, oldValue];
+          }
+          return prev;
+        });
+      }
+    }
+    
     // visible 키와 배지 키는 commonVisibility 업데이트
     if (
       key.endsWith(".visible") || 
@@ -2557,7 +2690,7 @@ export function LanguageProvider({
     window.dispatchEvent(new CustomEvent('translations-updated', { 
       detail: { key, value, language: targetLang } 
     }));
-  }, [language]);
+  }, [language, imagesToDelete]);
 
   // 🆕 페이지 전체 데이터 업데이트
   const updatePageData = (originalPageId: string, data: any) => {
@@ -2888,11 +3021,19 @@ export function LanguageProvider({
   // 🆕 Supabase 저장 함수
   const saveToSupabase = useCallback(async () => {
     try {
+      // 🆕 menuStructure 생성
+      const categories = getAllCategories();
+      const menuStructure = categories.map(categoryId => ({
+        id: categoryId,
+        pages: getPagesByCategory(categoryId)
+      }));
+      
       console.log('[LanguageContext] Saving to Supabase...', {
         translationsKoKeys: Object.keys(translations.ko).length,
         translationsEnKeys: Object.keys(translations.en).length,
         visibilityKeys: Object.keys(commonVisibility).length,
         metadataKeys: Object.keys(pageMetadata).length,
+        menuCategories: menuStructure.length,
       });
       
       const response = await fetch(
@@ -2907,6 +3048,7 @@ export function LanguageProvider({
             translations,
             commonVisibility,
             pageMetadata,
+            menuStructure, // 🆕 menuStructure 포함
           }),
         }
       );
@@ -2914,6 +3056,40 @@ export function LanguageProvider({
       if (response.ok) {
         const result = await response.json();
         console.log('[LanguageContext] ✅ Saved to Supabase successfully:', result);
+        
+        // 🆕 저장 성공 후 삭제 대기 이미지들을 Storage에서 삭제
+        if (imagesToDelete.length > 0) {
+          console.log(`[LanguageContext] Deleting ${imagesToDelete.length} images from Storage...`);
+          
+          // 이미지 삭제를 비동기로 실행 (에러 무시)
+          imagesToDelete.forEach(async (imageUrl) => {
+            try {
+              const deleteResponse = await fetch(
+                `https://${projectId}.supabase.co/functions/v1/make-server-8aea8ee5/admin/delete-image`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${publicAnonKey}`,
+                  },
+                  body: JSON.stringify({ imageUrl }),
+                }
+              );
+              
+              if (deleteResponse.ok) {
+                console.log('[LanguageContext] Image deleted successfully:', imageUrl);
+              } else {
+                console.warn('[LanguageContext] Image delete failed:', imageUrl, await deleteResponse.text());
+              }
+            } catch (error) {
+              console.warn('[LanguageContext] Image delete error (ignored):', error);
+            }
+          });
+          
+          // 삭제 대기 목록 초기화
+          setImagesToDelete([]);
+          console.log('[LanguageContext] ✅ All images deletion initiated');
+        }
         
         // ✅ 저장 성공 후 이벤트 발생 (Front 페이지 리렌더링 트리거)
         window.dispatchEvent(new CustomEvent('translations-updated', { 
@@ -2934,7 +3110,7 @@ export function LanguageProvider({
       console.error('[LanguageContext] ❌ Save error:', error);
       return false;
     }
-  }, [translations, commonVisibility, pageMetadata]);
+  }, [translations, commonVisibility, pageMetadata, imagesToDelete]);
 
   // 🆕 페이지 레이아웃 가져오기
   const getPageLayout = (pageId: string): PageLayout => {
@@ -3185,7 +3361,7 @@ export function LanguageProvider({
     // 1. 해당 카테고리의 모든 페이지 찾기
     const pages = getPagesByCategory(categoryId);
     
-    // 2. 각 페이지 삭제
+    // 2. 각 페이지 삭제 (deletePage가 자동으로 이미지도 삭제함)
     pages.forEach(pageId => {
       deletePage(pageId);
     });
@@ -3216,8 +3392,59 @@ export function LanguageProvider({
   const deletePage = (pageId: string) => {
     console.log('[LanguageContext] Deleting page:', pageId);
     
-    // 1. 페이지 관련 모든 번역 키 삭제
+    // 🆕 0. 이미지 URL 추출 및 삭제
+    const imageUrls: string[] = [];
     const pagePrefix = `${pageId}.`;
+    
+    // header-image 추출
+    const headerImageKey = `${pageId}.header-image`;
+    if (translations.ko[headerImageKey]) {
+      const headerImage = translations.ko[headerImageKey] as string;
+      if (headerImage && headerImage.includes('make-8aea8ee5-manual-images')) {
+        imageUrls.push(headerImage);
+      }
+    }
+    
+    // step1~10.image 추출
+    for (let i = 1; i <= 10; i++) {
+      const stepImageKey = `${pageId}.step${i}.image`;
+      if (translations.ko[stepImageKey]) {
+        const stepImage = translations.ko[stepImageKey] as string;
+        if (stepImage && stepImage.includes('make-8aea8ee5-manual-images')) {
+          imageUrls.push(stepImage);
+        }
+      }
+    }
+    
+    // 🆕 Storage에서 이미지 삭제 (비동기, 에러 무시)
+    if (imageUrls.length > 0) {
+      console.log('[LanguageContext] Deleting images:', imageUrls);
+      imageUrls.forEach(async (imageUrl) => {
+        try {
+          const response = await fetch(
+            `https://${projectId}.supabase.co/functions/v1/make-server-8aea8ee5/admin/delete-image`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${publicAnonKey}`,
+              },
+              body: JSON.stringify({ imageUrl }),
+            }
+          );
+          
+          if (response.ok) {
+            console.log('[LanguageContext] Image deleted successfully:', imageUrl);
+          } else {
+            console.warn('[LanguageContext] Image delete failed:', imageUrl, await response.text());
+          }
+        } catch (error) {
+          console.warn('[LanguageContext] Image delete error (ignored):', error);
+        }
+      });
+    }
+    
+    // 1. 페이지 관련 모든 번역 키 삭제
     
     // 한국어/영어 번역 키 삭제
     Object.keys(translations.ko).forEach(key => {
@@ -3321,8 +3548,9 @@ export function LanguageProvider({
     reorderPages,
     saveChanges: saveToSupabase,
     getTranslation,
+    loadFromSupabase, // 🆕 강제 갱신용
     updateTrigger, // 🆕 업데이트 트리거 제공
-  }), [language, t, updateTranslation, saveToSupabase, updateTrigger]);
+  }), [language, t, updateTranslation, saveToSupabase, loadFromSupabase, updateTrigger]);
 
   console.log('[LanguageProvider] Render decision:', { 
     isLoading, 

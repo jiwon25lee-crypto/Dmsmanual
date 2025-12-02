@@ -85,6 +85,11 @@ export function StartFeaturesPage({ pageId = "start-features", onSectionChange }
     <>
       <h1 className="mb-6">{t(`${pageId}.title`)}</h1>
 
+      {/* 🆕 디스크립션 - 제목 바로 아래로 이동 */}
+      <p className="text-foreground mb-8 leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
+        {t(`${pageId}.intro`)}
+      </p>
+
       {/* 최상단 이미지 */}
       {hasHeaderImage() && (
         <ImageContainer
@@ -92,10 +97,6 @@ export function StartFeaturesPage({ pageId = "start-features", onSectionChange }
           alt={t(`${pageId}.title`) as string}
         />
       )}
-
-      <p className="text-foreground mb-8 leading-relaxed">
-        {t(`${pageId}.intro`)}
-      </p>
 
       {/* 대메뉴 바로가기 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -118,7 +119,7 @@ export function StartFeaturesPage({ pageId = "start-features", onSectionChange }
                         {card.title}
                       </h3>
                     </div>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-muted-foreground text-sm leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
                       {card.desc}
                     </p>
                   </div>
@@ -176,7 +177,7 @@ export function StartFeaturesPage({ pageId = "start-features", onSectionChange }
           <p className="text-foreground leading-relaxed">
             💡 <span className="font-semibold">{t(`${pageId}.tip-title`)}</span>
           </p>
-          <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-2 text-sm leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
             {t(`${pageId}.tip-desc`)}
           </p>
         </div>

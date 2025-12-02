@@ -1,0 +1,31 @@
+category_id,page_id,layout,field,KO,EN
+signup,join-dms,default,title,대표 관리자 회원가입,Super Admin Signup
+signup,join-dms,default,intro,DMS를 사용할 기관의 대표 관리자 계정을 생성합니다. 회원가입 후 기관 구성원을 초대하고 서비스를 시작할 수 있습니다.,Create a super admin account for your institution to use DMS. After signup you can invite team members and start using the service.
+signup,join-dms,default,guide-title,회원가입 방법,How to Sign Up
+signup,join-dms,default,step1.title,계정 정보 입력,Enter Account Information
+signup,join-dms,default,step1.desc,"이메일 주소와 이름을 입력합니다. 입력하신 이메일은 기관의 대표 이메일로 등록되며, 회원가입 완료 후 기관 코드가 발송됩니다.","Enter your email address and name. The email will be registered as your institution's primary email, and the institution code will be sent after signup."
+signup,join-dms,default,step2.title,이메일 인증,Email Verification
+signup,join-dms,default,step2.desc,입력한 이메일 주소로 인증 코드가 발송됩니다. 이메일에서 인증 코드를 확인하고 입력하세요. 인증 코드는 15분간 유효합니다.,A verification code will be sent to your email. Check your email and enter the code. The code is valid for 15 minutes.
+signup,join-dms,default,step3.title,비밀번호 설정,Set Password
+signup,join-dms,default,step3.desc,로그인 시 사용할 비밀번호를 설정합니다. 영문과 숫자를 조합하여 8자 이상 입력하세요.,Set a password for login. Use a combination of letters and numbers with at least 8 characters.
+signup,join-dms,default,step4.title,회원가입 완료,Signup Complete
+signup,join-dms,default,step4.desc,"회원가입이 완료되었습니다. 로그인하여 DMS를 시작하세요. 기관 코드는 이메일로 발송되었으며, 구성원 초대 시 사용됩니다.",Signup complete! Log in to start using DMS. The institution code has been sent to your email and will be used to invite team members.
+pricing,pricing-overview,default,title,DMS 요금제 안내,DMS Pricing Plans
+pricing,pricing-overview,default,intro,"DMS는 Free trial·Free·Basic·Advanced 4가지 요금제를 제공합니다. 신규 가입 시 90일간 모든 기능을 무료로 체험할 수 있으며, 체험 종료 후 Free 플랜으로 자동 전환됩니다.","DMS offers 4 pricing plans: Free trial, Free, Basic, and Advanced. New signups can try all features free for 90 days and will automatically convert to Free plan after trial ends."
+pricing,pricing-overview,default,guide-title,요금제 확인 방법,How to Check Pricing Plans
+pricing,pricing-overview,default,step1.title,현재 요금제 확인,Check Current Plan
+pricing,pricing-overview,default,step1.desc,좌측 메뉴에서 설정을 선택한 후 요금제 정보 섹션에서 현재 사용 중인 요금제를 확인할 수 있습니다.,Select Settings from left menu and check your current plan in pricing information section.
+pricing,pricing-overview,default,step2.title,요금제 업그레이드,Upgrade Plan
+pricing,pricing-overview,default,step2.desc,"Basic 또는 Advanced 플랜으로 업그레이드하려면 요금제 정보 섹션에서 '업그레이드' 버튼을 클릭하세요. 결제 후 즉시 적용됩니다.","To upgrade to Basic or Advanced plan, click 'Upgrade' button in pricing section. Changes apply immediately after payment."
+test,test-features,features,title,기능 소개 페이지 (Features Layout),Features Page Example
+test,test-features,features,intro,Features 레이아웃은 카드 형태로 기능을 소개하는 페이지입니다.,Features layout displays functions in card format.
+test,test-features,features,feature1.title,첫 번째 기능,First Feature
+test,test-features,features,feature1.desc,첫 번째 기능에 대한 설명입니다.,Description of the first feature.
+test,test-features,features,feature2.title,두 번째 기능,Second Feature
+test,test-features,features,feature2.desc,두 번째 기능에 대한 설명입니다.,Description of the second feature.
+test,test-accordion,accordion,title,공지사항 (Accordion Layout),Notice Board (Accordion Layout)
+test,test-accordion,accordion,intro,Accordion 레이아웃은 접고 펼칠 수 있는 공지사항 형태입니다.,Accordion layout is a collapsible notice board format.
+test,test-accordion,accordion,notice1.title,첫 번째 공지사항,First Notice
+test,test-accordion,accordion,notice1.content,첫 번째 공지사항의 내용입니다.,Content of the first notice.
+test,test-accordion,accordion,notice2.title,두 번째 공지사항,Second Notice
+test,test-accordion,accordion,notice2.content,두 번째 공지사항의 내용입니다.,Content of the second notice.

@@ -103,7 +103,7 @@ export function TipBox({
       style={{ backgroundColor: "var(--point-green)" }}
     >
       <h3 className="text-foreground mb-3">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
+      <p className="text-muted-foreground" style={{ whiteSpace: 'pre-line' }}>{description}</p>
     </div>
   );
 }

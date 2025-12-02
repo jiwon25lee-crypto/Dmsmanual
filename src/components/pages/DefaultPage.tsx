@@ -53,6 +53,11 @@ export function DefaultPage({
       {/* 제목 */}
       <h2 className="mb-6">{t(`${pageId}.title`)}</h2>
 
+      {/* 🆕 디스크립션 - 제목 바로 아래로 이동 */}
+      <p className="text-foreground mb-6 leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
+        {t(`${pageId}.intro`)}
+      </p>
+
       {/* 최상단 이미지 (옵션) - 활성화되고 URL이 있을 때만 표시 */}
       {hasHeaderImage() && (
         <ImageContainer
@@ -60,11 +65,6 @@ export function DefaultPage({
           alt={t(`${pageId}.title`) as string}
         />
       )}
-
-      {/* 소개 */}
-      <p className="text-foreground mb-6 leading-relaxed">
-        {t(`${pageId}.intro`)}
-      </p>
 
       <h3 className="mb-6">{t(`${pageId}.guide-title`)}</h3>
 
@@ -80,17 +80,17 @@ export function DefaultPage({
               {t(`${pageId}.step1.title`)}
             </h3>
           </div>
-          {/* 이미지 */}
+          {/* 🆕 설명 (항상 먼저 표시) */}
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step1.desc`)}
+          </p>
+          {/* 이미지 (선택적) */}
           {isStepImageVisible(1) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step1.image`)}
               alt={t(`${pageId}.step1.title`) as string}
             />
           )}
-          {/* 설명 */}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step1.desc`)}
-          </p>
         </div>
       )}
 
@@ -105,15 +105,15 @@ export function DefaultPage({
               {t(`${pageId}.step2.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step2.desc`)}
+          </p>
           {isStepImageVisible(2) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step2.image`)}
               alt={t(`${pageId}.step2.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step2.desc`)}
-          </p>
         </div>
       )}
 
@@ -128,15 +128,15 @@ export function DefaultPage({
               {t(`${pageId}.step3.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step3.desc`)}
+          </p>
           {isStepImageVisible(3) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step3.image`)}
               alt={t(`${pageId}.step3.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step3.desc`)}
-          </p>
         </div>
       )}
 
@@ -151,15 +151,15 @@ export function DefaultPage({
               {t(`${pageId}.step4.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step4.desc`)}
+          </p>
           {isStepImageVisible(4) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step4.image`)}
               alt={t(`${pageId}.step4.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step4.desc`)}
-          </p>
         </div>
       )}
 
@@ -174,15 +174,15 @@ export function DefaultPage({
               {t(`${pageId}.step5.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step5.desc`)}
+          </p>
           {isStepImageVisible(5) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step5.image`)}
               alt={t(`${pageId}.step5.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step5.desc`)}
-          </p>
         </div>
       )}
 
@@ -197,15 +197,15 @@ export function DefaultPage({
               {t(`${pageId}.step6.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step6.desc`)}
+          </p>
           {isStepImageVisible(6) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step6.image`)}
               alt={t(`${pageId}.step6.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step6.desc`)}
-          </p>
         </div>
       )}
 
@@ -220,15 +220,15 @@ export function DefaultPage({
               {t(`${pageId}.step7.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step7.desc`)}
+          </p>
           {isStepImageVisible(7) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step7.image`)}
               alt={t(`${pageId}.step7.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step7.desc`)}
-          </p>
         </div>
       )}
 
@@ -243,15 +243,15 @@ export function DefaultPage({
               {t(`${pageId}.step8.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step8.desc`)}
+          </p>
           {isStepImageVisible(8) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step8.image`)}
               alt={t(`${pageId}.step8.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step8.desc`)}
-          </p>
         </div>
       )}
 
@@ -266,15 +266,15 @@ export function DefaultPage({
               {t(`${pageId}.step9.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step9.desc`)}
+          </p>
           {isStepImageVisible(9) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step9.image`)}
               alt={t(`${pageId}.step9.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step9.desc`)}
-          </p>
         </div>
       )}
 
@@ -289,15 +289,15 @@ export function DefaultPage({
               {t(`${pageId}.step10.title`)}
             </h3>
           </div>
+          <p className="text-muted-foreground mb-4" style={{ whiteSpace: 'pre-line' }}>
+            {t(`${pageId}.step10.desc`)}
+          </p>
           {isStepImageVisible(10) && (
             <ImageContainer
               src={getImageUrl(`${pageId}.step10.image`)}
               alt={t(`${pageId}.step10.title`) as string}
             />
           )}
-          <p className="text-muted-foreground">
-            {t(`${pageId}.step10.desc`)}
-          </p>
         </div>
       )}
 

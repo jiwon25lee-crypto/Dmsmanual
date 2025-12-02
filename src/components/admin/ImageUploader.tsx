@@ -183,6 +183,8 @@ export function ImageUploader({
   };
 
   const handleRemove = () => {
+    // ⚠️ Storage 삭제는 하지 않음 (저장 버튼 클릭 시 일괄 삭제)
+    // UI에서만 제거 표시
     setPreview(null);
     onUploadSuccess("");
     if (fileInputRef.current) {

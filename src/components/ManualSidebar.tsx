@@ -34,12 +34,19 @@ export function ManualSidebar({
   activeSection,
   onSectionChange,
 }: ManualSidebarProps) {
-  const { t, getAllCategories, getPagesByCategory } = useLanguage();
+  const { t, getAllCategories, getPagesByCategory, language } = useLanguage();
   const [expandedCategories, setExpandedCategories] = useState<
     string[]
   >(["start", "notice"]);
 
   const toggleCategory = (categoryId: string) => {
+    // 🆕 대메뉴 클릭 시 첫 번째 소메뉴로 이동
+    const pageIds = getPagesByCategory(categoryId);
+    if (pageIds.length > 0) {
+      onSectionChange(pageIds[0]); // 첫 번째 소메뉴 활성화
+    }
+    
+    // 기존 확장/축소 로직 유지
     setExpandedCategories((prev) =>
       prev.includes(categoryId)
         ? prev.filter((id) => id !== categoryId)
@@ -89,7 +96,7 @@ export function ManualSidebar({
                 letterSpacing: "-0.01em",
               }}
             >
-              {t("admin.manual")}
+              {language === "ko" ? "DMS 매뉴얼" : "DMS Manual"}
             </h2>
           </div>
         )}

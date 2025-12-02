@@ -3,6 +3,7 @@ import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
 import * as kv from "./kv_store.tsx";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { downloadCSVData } from "./csv-handler.tsx";
 
 const app = new Hono();
 
@@ -55,15 +56,17 @@ app.get("/make-server-8aea8ee5/manual/load", async (c) => {
 app.post("/make-server-8aea8ee5/manual/save", async (c) => {
   try {
     const body = await c.req.json();
-    const { translations, commonVisibility, pageMetadata } = body;
+    const { translations, commonVisibility, pageMetadata, menuStructure } = body;
     
     console.log('[Server] Saving manual data to KV store');
     console.log('[Server] Translation keys count:', Object.keys(translations?.ko || {}).length);
+    console.log('[Server] Menu structure categories:', menuStructure?.length || 0);
     
     await kv.set('dms_manual_data_v1', {
       translations,
       commonVisibility,
-      pageMetadata, // 🆕 추가
+      pageMetadata,
+      menuStructure, // 🆕 menuStructure 저장
       updatedAt: new Date().toISOString(),
     });
     
@@ -148,6 +151,163 @@ app.post("/make-server-8aea8ee5/admin/upload-image", async (c) => {
     return c.json({ 
       success: false, 
       error: 'Upload failed', 
+      details: error instanceof Error ? error.message : String(error) 
+    }, 500);
+  }
+});
+
+// 🆕 이미지 삭제 엔드포인트
+app.post("/make-server-8aea8ee5/admin/delete-image", async (c) => {
+  try {
+    console.log('[Server] Image delete request received');
+    
+    const body = await c.req.json();
+    const { imageUrl } = body;
+    
+    if (!imageUrl) {
+      console.error('[Server] No imageUrl provided');
+      return c.json({ success: false, error: 'No imageUrl provided' }, 400);
+    }
+    
+    console.log('[Server] Deleting image:', imageUrl);
+    
+    // URL에서 파일 경로 추출
+    // 예: https://xxx.supabase.co/storage/v1/object/public/make-8aea8ee5-manual-images/pageId/filename.png
+    // -> pageId/filename.png
+    const bucketName = 'make-8aea8ee5-manual-images';
+    const match = imageUrl.match(/\/make-8aea8ee5-manual-images\/(.+)$/);
+    
+    if (!match) {
+      console.error('[Server] Invalid image URL format:', imageUrl);
+      return c.json({ success: false, error: 'Invalid image URL format' }, 400);
+    }
+    
+    const filePath = match[1];
+    console.log('[Server] Extracted file path:', filePath);
+    
+    // Supabase Storage에서 삭제
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .remove([filePath]);
+    
+    if (error) {
+      console.error('[Server] Delete error:', error);
+      return c.json({ success: false, error: error.message }, 500);
+    }
+    
+    console.log('[Server] Delete successful:', filePath);
+    
+    return c.json({
+      success: true,
+      message: 'Image deleted successfully',
+      deletedPath: filePath,
+    });
+  } catch (error) {
+    console.error('[Server] Image delete error:', error);
+    return c.json({ 
+      success: false, 
+      error: 'Delete failed', 
+      details: error instanceof Error ? error.message : String(error) 
+    }, 500);
+  }
+});
+
+// 🆕 CSV 데이터 다운로드 엔드포인트
+app.get("/make-server-8aea8ee5/admin/download-csv", async (c) => {
+  try {
+    console.log('[Server] CSV download request received');
+    
+    // CSV 생성
+    const csvText = await downloadCSVData();
+    
+    console.log('[Server] CSV download successful');
+    
+    // CSV 텍스트 반환
+    return c.text(csvText, 200, {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="dms-manual-data.csv"'
+    });
+    
+  } catch (error) {
+    console.error('[Server] CSV download error:', error);
+    return c.json({ 
+      error: 'CSV download failed', 
+      details: error instanceof Error ? error.message : String(error) 
+    }, 500);
+  }
+});
+
+// 🆕 초기 데이터 로드 엔드포인트
+app.post("/make-server-8aea8ee5/admin/load-initial-data", async (c) => {
+  try {
+    console.log('[Server] Initial data load request received');
+    
+    const body = await c.req.json();
+    const { csvData } = body;
+    
+    if (!csvData || !Array.isArray(csvData)) {
+      return c.json({ error: 'Invalid CSV data' }, 400);
+    }
+    
+    console.log('[Server] Processing CSV rows:', csvData.length);
+    
+    // CSV를 구조화된 데이터로 변환
+    const { transformCSVToTranslations } = await import('./csv-handler.tsx');
+    const newData = transformCSVToTranslations(csvData);
+    
+    // 기존 데이터 로드
+    const existingData = await kv.get('dms_manual_data_v1');
+    console.log('[Server] Existing data loaded:', existingData ? 'yes' : 'no');
+    
+    // 데이터 병합
+    const mergedData = {
+      translations: {
+        ko: {
+          ...(existingData?.translations?.ko || {}),
+          ...newData.translations.ko
+        },
+        en: {
+          ...(existingData?.translations?.en || {}),
+          ...newData.translations.en
+        }
+      },
+      commonVisibility: {
+        ...(existingData?.commonVisibility || {}),
+        ...newData.commonVisibility
+      },
+      pageMetadata: {
+        ...(existingData?.pageMetadata || {}),
+        ...newData.pageMetadata
+      },
+      menuStructure: newData.menuStructure, // 새 메뉴 구조로 교체
+      updatedAt: new Date().toISOString()
+    };
+    
+    console.log('[Server] Merged data:', {
+      koKeys: Object.keys(mergedData.translations.ko).length,
+      enKeys: Object.keys(mergedData.translations.en).length,
+      categories: mergedData.menuStructure.length
+    });
+    
+    // Supabase에 저장
+    await kv.set('dms_manual_data_v1', mergedData);
+    
+    console.log('[Server] ✅ Initial data load complete');
+    
+    return c.json({
+      success: true,
+      stats: {
+        categoriesAdded: newData.menuStructure.length,
+        translationsAdded: Object.keys(newData.translations.ko).length,
+        totalCategories: mergedData.menuStructure.length,
+        totalTranslations: Object.keys(mergedData.translations.ko).length
+      }
+    });
+    
+  } catch (error) {
+    console.error('[Server] Initial data load error:', error);
+    return c.json({ 
+      error: 'Initial data load failed', 
       details: error instanceof Error ? error.message : String(error) 
     }, 500);
   }

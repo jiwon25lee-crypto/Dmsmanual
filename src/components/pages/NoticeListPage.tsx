@@ -72,7 +72,7 @@ export function NoticeListPage({ pageId: _providedPageId }: NoticeListPageProps)
     <>
       <h1 className="mb-6">{t(`${pageId}.title`)}</h1>
 
-      <p className="text-foreground mb-8 leading-relaxed">
+      <p className="text-foreground mb-8 leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
         {t(`${pageId}.intro`)}
       </p>
 
@@ -151,7 +151,7 @@ export function NoticeListPage({ pageId: _providedPageId }: NoticeListPageProps)
           <p className="text-foreground leading-relaxed">
             💡 <span className="font-semibold">{t(`${pageId}.tip-title`)}</span>
           </p>
-          <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+          <p className="text-muted-foreground mt-2 text-sm leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
             {t(`${pageId}.tip-desc`)}
           </p>
         </div>

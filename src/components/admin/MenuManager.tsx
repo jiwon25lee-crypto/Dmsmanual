@@ -213,7 +213,8 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
     reorderCategories,
     reorderPages,
     saveChanges, // 🆕 수동 저장
-    getTranslation // 🆕 특정 언어 번역 가져오기
+    getTranslation, // 🆕 특정 언어 번역 가져오기
+    updateTrigger, // 🆕 업데이트 트리거 추가
   } = useLanguage();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -247,14 +248,16 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
   const [categoryOrder, setCategoryOrder] = useState<string[]>([]);
   
   const categories = useMemo(() => {
+    console.log('[MenuManager] 🔄 Recomputing categories...', { updateTrigger });
     const allCategories = getAllCategories();
+    console.log('[MenuManager] 📋 All categories:', allCategories);
     setCategoryOrder(allCategories);
     return allCategories.map((categoryId) => ({
       id: categoryId,
       name: t(`category.${categoryId}`),
       pageCount: getDynamicPagesByCategory(categoryId).length,
     }));
-  }, [t, getAllCategories, getDynamicPagesByCategory]);
+  }, [getAllCategories, getDynamicPagesByCategory, t, updateTrigger]); // 🆕 updateTrigger 추가
 
   // 선택된 카테고리의 페이지 목록
   const [pageOrder, setPageOrder] = useState<string[]>([]);
@@ -274,13 +277,11 @@ function MenuManagerContent({ onEditPage }: MenuManagerProps) {
     const pageIds = getDynamicPagesByCategory(selectedCategory);
     setPageOrder(pageIds);
     return pageIds.map((pageId) => {
-      const pageName = pageId.replace(`${selectedCategory}-`, "");
-      const sectionKey = `section.${selectedCategory}.${pageName}`;
       const layout = getPageLayout(pageId); // 🆕 실제 레이아웃 가져오기
       console.log('[MenuManager] Page:', pageId, 'Layout:', layout); // 디버깅
       return {
         id: pageId,
-        title: t(sectionKey),
+        title: t(`${pageId}.title`), // ✅ 실제 페이지 제목 사용
         component: getLayoutName(layout), // 🆕 레이아웃 이름으로 표시
         order: 1,
       };
